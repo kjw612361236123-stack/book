@@ -10,7 +10,7 @@ export default function BookTimeline({ books }: { books: Book[] }) {
   // Group by "YYYY년 M월"
   const grouped: Record<string, Book[]> = {};
   books.forEach(b => {
-    const d = new Date(b.date || Date.now());
+    const d = new Date(b.date || '2026-01-01');
     const key = `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(b);
