@@ -41,22 +41,30 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
     setIsMuted(!isMuted);
   };
 
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
   return (
     <div 
-      className="fixed bottom-6 left-6 z-50 pointer-events-auto"
+      className="fixed bottom-24 md:bottom-8 left-4 md:left-8 z-50 pointer-events-auto"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Hidden iframe for audio API */}
       <div className="hidden">
-        <iframe
-          ref={playerRef}
-          width="10"
-          height="10"
-          src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&playsinline=1&autohide=1&showinfo=0&autoplay=0&loop=1&playlist=${videoId}`}
-          allow="autoplay"
-          title="Background Music"
-        />
+        {origin && (
+          <iframe
+            ref={playerRef}
+            width="10"
+            height="10"
+            src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=0&playsinline=1&autohide=1&showinfo=0&autoplay=0&loop=1&playlist=${videoId}&origin=${origin}`}
+            allow="autoplay"
+            title="Background Music"
+          />
+        )}
       </div>
 
       <div className={`
