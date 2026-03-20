@@ -1,0 +1,180 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FDFBF7;
+  --foreground: #2A2A28;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-nanum-myeongjo);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1A1817;
+    --foreground: #EFEFE9;
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+/* Smooth image rendering */
+img {
+  image-rendering: auto;
+}
+
+/* Focus styles — minimal, accessible */
+*:focus-visible {
+  outline: 2px solid #8B7355;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Notion Pro Typography & Responsive Overrides */
+.notion-app {
+  font-family: var(--font-sans) !important;
+  font-size: 15px !important;
+}
+
+.notion-page {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  width: 100% !important;
+}
+
+.notion-title {
+  font-size: 2.25rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem !important;
+  line-height: 1.2 !important;
+}
+
+.notion-text {
+  font-size: 1.05rem !important;
+  line-height: 1.75 !important;
+  color: #3f3f46;
+}
+
+@media (prefers-color-scheme: dark) {
+  .notion-text {
+    color: #d4d4d8;
+  }
+}
+
+.notion-collection-page-properties {
+  padding-bottom: 2rem !important;
+  border-bottom: 1px solid #f4f4f5 !important;
+  margin-bottom: 2rem !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .notion-collection-page-properties {
+    border-bottom: 1px solid #27272a !important;
+  }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .notion-app {
+    font-size: 14px !important;
+  }
+  .notion-title {
+    font-size: 1.75rem !important;
+  }
+  .notion-text {
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+  }
+  .notion-h1 { font-size: 1.5rem !important; }
+  .notion-h2 { font-size: 1.25rem !important; }
+  .notion-h3 { font-size: 1.1rem !important; }
+}
+
+/* Custom Scrollbar suppression */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Analog Diary Notion Overrides */
+.notion-paper-override .notion,
+.notion-paper-override .notion-app {
+  background: transparent !important;
+  color: var(--foreground) !important;
+}
+
+/* Hide breadcrumbs header */
+.notion-paper-override .notion-header,
+.notion-paper-override .notion-nav-header {
+  display: none !important;
+}
+
+.notion-paper-override .notion-title,
+.notion-paper-override .notion-h,
+.notion-paper-override .notion-h1,
+.notion-paper-override .notion-h2,
+.notion-paper-override .notion-h3 {
+  font-family: var(--font-serif) !important;
+  color: var(--foreground) !important;
+}
+
+.notion-paper-override .notion-text {
+  font-family: var(--font-sans) !important;
+  color: var(--foreground) !important;
+}
+
+/* Selection color */
+::selection {
+  background: #E8E3D8;
+}
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background: #3A3530;
+  }
+}
+
+/* Safe area padding for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Force show Notion Comments */
+.notion-paper-override .notion-page-discussion {
+  display: block !important;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+  opacity: 0.9;
+}
+
+.notion-paper-override .notion-page-discussion .notion-comment {
+  font-family: var(--font-sans) !important;
+  color: var(--foreground) !important;
+}
