@@ -42,25 +42,41 @@ export const NotionPage = ({ recordMap, comment }: { recordMap: any, comment?: s
 
   useEffect(() => {
     if (mounted && comment) {
-      // Small timeout to wait for NotionRenderer to finish DOM painting
-      const targetTimer = setTimeout(() => {
-        // Find the properties table or the content block to insert before
-        let targetNode = document.querySelector('.notion-page-content');
-        if (!targetNode) targetNode = document.querySelector('.notion-page'); // fallback
-        
-        if (targetNode && targetNode.parentNode) {
+      let retries = 0;
+      
+      const checkAndInsert = () => {
+        const propertiesTable = document.querySelector('.notion-collection-page-properties');
+        let targetNode = document.querySelector('.notion-page-content') || document.querySelector('.notion-page');
+
+        if (propertiesTable && propertiesTable.parentNode) {
           const existingWrapper = document.querySelector('.custom-comment-wrapper');
           if (!existingWrapper) {
             const wrapper = document.createElement('div');
-            // Give it some padding so it rests comfortably below the table
+            wrapper.className = 'custom-comment-wrapper w-full pt-8 pb-4 border-b border-[#DED8CE]/40 dark:border-[#363330]/60';
+            // properties 바로 다음에 삽입
+            propertiesTable.parentNode.insertBefore(wrapper, propertiesTable.nextSibling);
+            setPortalTarget(wrapper);
+          } else {
+            // 속성 테이블이 뒤늦게 렌더링되어 코멘트가 위로 밀려난 경우, 위치를 다시 바로잡음
+            propertiesTable.parentNode.insertBefore(existingWrapper, propertiesTable.nextSibling);
+            setPortalTarget(existingWrapper);
+          }
+        } else if (targetNode && targetNode.parentNode && retries > 10) {
+          // 1초 이상 기다려도 propertiesTable이 없으면 기존 로직(content 위)으로 Fallback
+          const existingWrapper = document.querySelector('.custom-comment-wrapper');
+          if (!existingWrapper) {
+            const wrapper = document.createElement('div');
             wrapper.className = 'custom-comment-wrapper w-full pt-8 pb-4 border-b border-[#DED8CE]/40 dark:border-[#363330]/60';
             targetNode.parentNode.insertBefore(wrapper, targetNode);
             setPortalTarget(wrapper);
-          } else {
-            setPortalTarget(existingWrapper);
           }
+        } else {
+          retries++;
+          setTimeout(checkAndInsert, 100);
         }
-      }, 100);
+      };
+
+      const targetTimer = setTimeout(checkAndInsert, 100);
       return () => clearTimeout(targetTimer);
     }
   }, [mounted, comment]);

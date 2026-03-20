@@ -29,7 +29,7 @@ export default async function Home() {
                     <p className="text-[9px] sm:text-[10px] font-sans text-[#A39E98] dark:text-[#7A746D] mt-1 flex items-center gap-1.5">
                       <span>{books.length}권의 기록</span>
                       <span className="text-[#DED8CE] dark:text-[#363330] text-[8px]">·</span>
-                      <span>누적 방문 <VisitorCounter />명</span>
+                      <span>오늘 방문 <VisitorCounter />명</span>
                     </p>
                   </div>
                 </div>

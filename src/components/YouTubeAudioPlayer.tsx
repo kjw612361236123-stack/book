@@ -98,7 +98,7 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Hidden container for YouTube Player */}
-      <div className="hidden">
+      <div className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
         <div ref={containerRef}></div>
       </div>
 

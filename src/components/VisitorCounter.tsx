@@ -6,9 +6,13 @@ export default function VisitorCounter() {
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
-    // Fetch and increment hit counter
-    // Using a free count API with a unique namespace for this site
-    fetch('https://api.counterapi.dev/v1/shelf-kjw2026/visits/up')
+    // KST 기준으로 오늘 날짜(YYYY-MM-DD) 값을 가져옵니다.
+    const kstDateString = new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' });
+    const today = new Date(kstDateString);
+    const dateKey = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+    
+    // 네임스페이스에 날짜를 붙여 매일 자정에 새로운 카운터가 시작되도록 합니다.
+    fetch(`https://api.counterapi.dev/v1/shelf-kjw2026-${dateKey}/visits/up`)
       .then(res => res.json())
       .then(data => setCount(data.count))
       .catch(() => {
