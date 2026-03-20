@@ -1,11 +1,12 @@
 import { getDatabase } from '@/lib/notion';
 import BookArchive from '@/components/BookArchive';
 import PageEntrance, { StaggeredReveal } from '@/components/PageEntrance';
+import VisitorCounter from '@/components/VisitorCounter';
 
 export const revalidate = 3600;
 
 export default async function Home() {
-  const databaseId = process.env.NOTION_DATABASE_ID!;
+  const databaseId = process.env.NOTION_DATABASE_ID;
   const books = await getDatabase(databaseId);
 
   return (
@@ -25,7 +26,11 @@ export default async function Home() {
                 <div className="flex items-center gap-3">
                   <div>
                     <h2 className="text-[11px] sm:text-xs font-sans font-medium text-[#3A3530] dark:text-[#EFEFE9] leading-none">김재원의 서재</h2>
-                    <p className="text-[9px] sm:text-[10px] font-sans text-[#A39E98] dark:text-[#7A746D] mt-1">{books.length}권의 기록</p>
+                    <p className="text-[9px] sm:text-[10px] font-sans text-[#A39E98] dark:text-[#7A746D] mt-1 flex items-center gap-1.5">
+                      <span>{books.length}권의 기록</span>
+                      <span className="text-[#DED8CE] dark:text-[#363330] text-[8px]">·</span>
+                      <span>누적 방문 <VisitorCounter />명</span>
+                    </p>
                   </div>
                 </div>
                 <p className="text-[9px] sm:text-[10px] font-serif italic text-[#C4B9A8] dark:text-[#6B6560] hidden sm:block">
