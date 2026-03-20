@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
   --background: #FDFBF7;
   --foreground: #2A2A28;
+  --font-nanum-myeongjo: 'Nanum Myeongjo', serif;
 }
 
 @theme inline {

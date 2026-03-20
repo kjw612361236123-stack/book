@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Nanum_Myeongjo } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import YouTubeAudioPlayer from "@/components/YouTubeAudioPlayer";
 import "./globals.css";
 
@@ -13,11 +13,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const nanumMyeongjo = Nanum_Myeongjo({
-  weight: ["400", "700", "800"],
-  subsets: ["latin"],
-  variable: "--font-nanum-myeongjo",
-});
+
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -48,7 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
