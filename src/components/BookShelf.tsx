@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Book } from './ReadingDashboard';
+import type { Book } from '@/types/book';
 
 export default function BookShelf({ books }: { books: Book[] }) {
   if (books.length === 0) return null;
@@ -16,8 +16,9 @@ export default function BookShelf({ books }: { books: Book[] }) {
           <motion.div 
             key={book.id}
             initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.03, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-20px" }}
+            transition={{ delay: (i % 7) * 0.04, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <Link 
               href={`/book/${book.id}`} 

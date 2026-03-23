@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Book } from './ReadingDashboard';
+import type { Book } from '@/types/book';
 
 export default function BookTimeline({ books }: { books: Book[] }) {
   if (books.length === 0) return null;
@@ -28,7 +28,7 @@ export default function BookTimeline({ books }: { books: Book[] }) {
            initial={{ opacity: 0, x: -20 }}
            whileInView={{ opacity: 1, x: 0 }}
            viewport={{ once: true, margin: "-80px" }}
-           transition={{ delay: index * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+           transition={{ delay: (index % 5) * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
            className="relative pl-7 md:pl-12 mb-12 last:mb-0"
          >
             {/* Timeline dot */}

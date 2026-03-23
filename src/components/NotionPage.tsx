@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { createPortal } from 'react-dom';
 import { NotionRenderer } from 'react-notion-x';
 import Link from 'next/link';
+import Image from 'next/image';
 import dynamic from 'next/dynamic';
 
 // Import essential styles
@@ -32,6 +33,19 @@ const Modal = dynamic(
 export const NotionPage = ({ recordMap, comment }: { recordMap: any, comment?: string }) => {
   const [mounted, setMounted] = useState(false);
   const [portalTarget, setPortalTarget] = useState<Element | null>(null);
+  const [isDark, setIsDark] = useState(false);
+
+  // Detect dark mode from html class
+  useEffect(() => {
+    const html = document.documentElement;
+    setIsDark(html.classList.contains('dark'));
+
+    const observer = new MutationObserver(() => {
+      setIsDark(html.classList.contains('dark'));
+    });
+    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -95,10 +109,11 @@ export const NotionPage = ({ recordMap, comment }: { recordMap: any, comment?: s
         <NotionRenderer
           recordMap={recordMap}
           fullPage={true}
-          darkMode={false}
+          darkMode={isDark}
           showTableOfContents={false}
           components={{
             nextLink: Link,
+            nextImage: Image, // Use next/image for Notion images
             Code,
             Collection,
             Equation,

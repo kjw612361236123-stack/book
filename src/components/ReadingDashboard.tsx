@@ -2,16 +2,7 @@
 
 import { useMemo, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-
-export interface Book {
-  id: string;
-  title: string;
-  date: string;
-  tags: string[];
-  thumbnail: string;
-  description: string;
-  rating?: string;
-}
+import type { Book } from '@/types/book';
 
 export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], goal?: number }) {
   // Determine which years actually have data
@@ -286,6 +277,14 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
 
         {/* Empty string to remove the original Card 4 location */}
 
+      </div>
+      
+      {/* Swipe indicator dots (mobile only) */}
+      <div className="flex items-center justify-center gap-1.5 mt-4 sm:hidden">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#8B7355] dark:bg-[#D4C3A3]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-[#DED8CE] dark:bg-[#363330]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-[#DED8CE] dark:bg-[#363330]" />
+        <span className="w-1.5 h-1.5 rounded-full bg-[#DED8CE] dark:bg-[#363330]" />
       </div>
     </div>
   );

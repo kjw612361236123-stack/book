@@ -31,11 +31,11 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
     window.onYouTubeIframeAPIReady = () => {
       if (containerRef.current) {
         playerRef.current = new window.YT.Player(containerRef.current, {
-          height: '10',
-          width: '10',
+          height: '40',
+          width: '40',
           videoId: videoId,
           playerVars: {
-            autoplay: 0, // Mobile blocked anyway
+            autoplay: 0,
             controls: 0,
             showinfo: 0,
             rel: 0,
@@ -45,16 +45,10 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
             enablejsapi: 1,
           },
           events: {
-            onReady: () => {
-              setIsReady(true);
-            },
+            onReady: () => setIsReady(true),
             onStateChange: (event: any) => {
-              // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
-              if (event.data === 1) {
-                setIsPlaying(true);
-              } else if (event.data === 2 || event.data === 0) {
-                setIsPlaying(false);
-              }
+              if (event.data === 1) setIsPlaying(true);
+              else if (event.data === 2 || event.data === 0) setIsPlaying(false);
             }
           }
         });
@@ -62,7 +56,6 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
     };
 
     return () => {
-      // Cleanup
       if (playerRef.current && playerRef.current.destroy) {
         playerRef.current.destroy();
       }
@@ -71,34 +64,24 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
 
   const togglePlay = () => {
     if (!playerRef.current || !isReady) return;
-    
-    if (isPlaying) {
-      playerRef.current.pauseVideo();
-    } else {
-      playerRef.current.playVideo();
-    }
+    if (isPlaying) playerRef.current.pauseVideo();
+    else playerRef.current.playVideo();
   };
 
   const toggleMute = () => {
     if (!playerRef.current || !isReady) return;
-
-    if (isMuted) {
-      playerRef.current.unMute();
-      setIsMuted(false);
-    } else {
-      playerRef.current.mute();
-      setIsMuted(true);
-    }
+    if (isMuted) { playerRef.current.unMute(); setIsMuted(false); }
+    else { playerRef.current.mute(); setIsMuted(true); }
   };
 
   return (
     <div 
-      className="fixed bottom-24 md:bottom-8 left-4 md:left-8 z-50 pointer-events-auto"
+      className="fixed bottom-[calc(24px+env(safe-area-inset-bottom))] md:bottom-8 left-4 md:left-8 z-50 pointer-events-auto"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Hidden container for YouTube Player */}
-      <div className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
+      {/* Hidden YouTube player container */}
+      <div className="absolute opacity-[0.01] pointer-events-none w-10 h-10 overflow-hidden -z-10 top-0 left-0">
         <div ref={containerRef}></div>
       </div>
 
@@ -115,7 +98,7 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
           onClick={togglePlay}
           disabled={!isReady}
           className={`
-            w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300
+            w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 active:scale-[0.93]
             ${isPlaying 
               ? 'bg-[#8B7355] text-white dark:bg-[#D4C3A3] dark:text-[#1A1817]' 
               : 'bg-[#EEEBE3] text-[#A39E98] hover:text-[#3A3530] dark:bg-[#201E1C] dark:hover:text-[#EFEFE9]'
@@ -142,7 +125,7 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
           )}
         </button>
 
-        {/* Expanded Controls (Only on Hover or Playing) */}
+        {/* Expanded Controls */}
         <div className={`
           flex items-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
           ${(isHovered || isPlaying) && isReady ? 'w-[72px] opacity-100 pr-1' : 'w-0 opacity-0'}
@@ -150,7 +133,7 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
           <button 
             onClick={togglePlay}
             disabled={!isReady}
-            className="w-8 h-8 flex items-center justify-center text-[#A39E98] hover:text-[#3A3530] dark:text-[#7A746D] dark:hover:text-[#EFEFE9] transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-[#A39E98] hover:text-[#3A3530] dark:text-[#7A746D] dark:hover:text-[#EFEFE9] transition-colors active:scale-[0.93]"
           >
             {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
           </button>
@@ -158,7 +141,7 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
           <button 
             onClick={toggleMute}
             disabled={!isReady}
-            className="w-8 h-8 flex items-center justify-center text-[#A39E98] hover:text-[#3A3530] dark:text-[#7A746D] dark:hover:text-[#EFEFE9] transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-[#A39E98] hover:text-[#3A3530] dark:text-[#7A746D] dark:hover:text-[#EFEFE9] transition-colors active:scale-[0.93]"
           >
             {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
           </button>
