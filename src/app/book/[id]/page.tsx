@@ -85,21 +85,28 @@ export default async function BookPost({ params }: { params: Promise<{ id: strin
 
         {/* Related Books Section */}
         {relatedBooks.length > 0 && (
-          <section className="mt-16 pt-8 border-t border-[#E8E3D8]/40 dark:border-[#363330]/40">
-            <h3 className="text-[#A39E98] dark:text-[#7A746D] text-[10px] sm:text-[11px] font-sans tracking-[0.2em] uppercase mb-5">이 책도 읽어보세요</h3>
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+          <section className="mt-20 pt-10 border-t border-[#E8E3D8]/30 dark:border-[#363330]/30">
+            <h3 className="flex items-center text-[#A39E98] dark:text-[#7A746D] text-[10px] font-sans tracking-[0.15em] mb-8">
+              <span className="w-5 h-px bg-[#E8E3D8] dark:bg-[#363330] mr-4"></span>
+              이 책도 읽어보세요
+            </h3>
+            <div className="flex flex-wrap gap-5 sm:gap-8">
               {relatedBooks.map((book: any) => (
-                <Link key={book.id} href={`/book/${book.id}`} className="group">
-                  <div className="aspect-[2.7/4] rounded-xl overflow-hidden bg-[#EEEBE3] dark:bg-[#201E1C] relative shadow-sm group-hover:shadow-lg group-hover:-translate-y-1 transition-all duration-300">
+                <Link key={book.id} href={`/book/${book.id}`} className="group w-[90px] sm:w-[110px] flex-shrink-0">
+                  <div className="w-full aspect-[2.7/4] rounded-md overflow-hidden bg-white dark:bg-[#1E1C1A] relative shadow-[0_2px_10px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_10px_24px_rgba(0,0,0,0.6)] transition-all duration-400">
                     {book.thumbnail ? (
-                      <Image src={book.thumbnail} alt={book.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" unoptimized />
+                      <Image src={book.thumbnail} alt={book.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out" unoptimized />
                     ) : (
-                      <div className="absolute inset-0 flex items-center justify-center p-3 bg-gradient-to-br from-[#FDFBF7] to-[#EEEBE3] dark:from-[#1E1C1A] dark:to-[#201E1C]">
-                        <span className="text-[9px] font-serif text-[#8B7355] dark:text-[#D4C3A3] text-center line-clamp-3">{book.title}</span>
+                      <div className="absolute inset-0 flex items-center justify-center p-3 bg-gradient-to-br from-[#FDFBF7] to-[#EEEBE3] dark:from-[#1E1C1A] dark:to-[#201E1C] border-l-[3px] border-[#8B7355]">
+                        <span className="text-[9px] font-serif text-[#8B7355] dark:text-[#D4C3A3] text-center line-clamp-3 leading-relaxed">{book.title}</span>
                       </div>
                     )}
+                    {/* Realistic book spine */}
+                    <div className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-r from-black/25 via-black/8 to-transparent pointer-events-none" />
+                    <div className="absolute inset-y-0 right-0 w-px bg-white/15 pointer-events-none" />
+                    <div className="absolute inset-x-0 top-0 h-px bg-white/20 pointer-events-none" />
                   </div>
-                  <p className="mt-2 text-[10px] sm:text-xs font-serif text-[#3A3530] dark:text-[#EFEFE9] line-clamp-1 group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-colors">{book.title}</p>
+                  <p className="mt-3 text-[10px] sm:text-[11px] font-serif text-[#3A3530] dark:text-[#EFEFE9] line-clamp-2 leading-tight group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-colors">{book.title}</p>
                 </Link>
               ))}
             </div>
