@@ -17,39 +17,42 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-[#FDFBF7] dark:bg-[#1A1817] selection:bg-[#E8E3D8] dark:selection:bg-[#3A3530]">
       <PageEntrance>
-        {/* Subtle paper texture with analog flicker */}
-        <div className="fixed -inset-[200%] opacity-[0.015] dark:opacity-[0.035] pointer-events-none mix-blend-multiply animate-noise" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+        {/* Paper noise texture */}
+        <div className="fixed -inset-[200%] opacity-[0.012] dark:opacity-[0.03] pointer-events-none mix-blend-multiply animate-noise" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
 
-        <div className="w-full max-w-[520px] sm:max-w-5xl mx-auto px-5 sm:px-6 md:px-8 relative z-10">
+        {/* Ambient warm glow — top */}
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-radial from-[#D4C3A3]/8 via-transparent to-transparent rounded-full blur-3xl pointer-events-none dark:from-[#8B7355]/5"></div>
+
+        <div className="w-full max-w-[520px] sm:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 relative z-10">
           
-          {/* Hero — Emotional, editorial cover */}
-          <section className="w-full pt-6 sm:pt-10">
-
-            {/* Top bar — personal branding */}
+          {/* ===== Header ===== */}
+          <section className="w-full pt-5 sm:pt-10">
             <StaggeredReveal delay={0.05}>
-              <div className="flex items-center justify-between mb-4 sm:mb-5">
-                <div className="flex items-center gap-3">
+              <header className="flex items-center justify-between mb-5 sm:mb-6">
+                <div className="flex items-center gap-2.5">
+                  {/* Animated dot indicator */}
+                  <div className="w-2 h-2 rounded-full bg-[#8B7355] dark:bg-[#D4C3A3] animate-pulse-soft"></div>
                   <div>
-                    <h2 className="text-[11px] sm:text-xs font-sans font-medium text-[#3A3530] dark:text-[#EFEFE9] leading-none">김재원의 서재</h2>
+                    <h2 className="text-xs sm:text-[13px] font-sans font-semibold text-[#3A3530] dark:text-[#EFEFE9] leading-none tracking-wide">
+                      김재원의 서재
+                    </h2>
                     <p className="text-[9px] sm:text-[10px] font-sans text-[#A39E98] dark:text-[#7A746D] mt-1 flex items-center gap-1.5">
                       <span>{books.length}권의 기록</span>
-                      <span className="text-[#DED8CE] dark:text-[#363330] text-[8px]">·</span>
-                      <span>오늘 방문 <VisitorCounter />명</span>
+                      <span className="text-[#DED8CE] dark:text-[#363330]">|</span>
+                      <span>방문 <VisitorCounter /></span>
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-[9px] sm:text-[10px] font-serif italic text-[#C4B9A8] dark:text-[#6B6560] hidden sm:block">
-                    "읽은 책들의 온기가 남아있는 곳"
-                  </p>
+                <div className="flex items-center gap-2.5">
+                  <ThemeToggle />
                 </div>
-              </div>
+              </header>
             </StaggeredReveal>
             
-            {/* Main Visual — Cinematic banner with parallax */}
+            {/* ===== Hero — Cinematic Banner ===== */}
             <StaggeredReveal delay={0.12}>
               <ParallaxHero>
-                <div className="w-full aspect-[4/5] sm:aspect-[2.2/1] rounded-[16px] sm:rounded-[28px] overflow-hidden relative shadow-[0_8px_40px_rgba(139,115,85,0.08)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.4)]">
+                <div className="w-full aspect-[3/4] sm:aspect-[2.2/1] rounded-[20px] sm:rounded-[28px] overflow-hidden relative shadow-[0_12px_48px_rgba(139,115,85,0.12)] dark:shadow-[0_12px_48px_rgba(0,0,0,0.6)]">
                   <Image 
                     src="/book.gif" 
                     alt="Reading Archive" 
@@ -58,44 +61,54 @@ export default async function Home() {
                     priority
                     unoptimized
                   />
-                  {/* Multi-layer gradient for depth */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1817]/70 via-[#1A1817]/10 to-transparent"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#1A1817]/20 to-transparent"></div>
+                  {/* Cinematic gradient overlays */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#1A1817]/80 via-[#1A1817]/20 to-[#1A1817]/5"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#1A1817]/30 via-transparent to-transparent"></div>
                   
-                  {/* Overlay title */}
-                  <div className="absolute bottom-5 left-5 right-5 sm:bottom-10 sm:left-12 sm:right-12">
-                    <span className="text-[8px] sm:text-[9px] font-sans text-white/50 tracking-[0.3em] uppercase block mb-2 sm:mb-3">
-                      Reading Archive
-                    </span>
-                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-serif text-white/95 tracking-tight leading-[1.15]">
+                  {/* Hero content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-10 md:p-12">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-4 h-px bg-[#D4C3A3]/60"></div>
+                      <span className="text-[8px] sm:text-[9px] font-sans text-white/45 tracking-[0.35em] uppercase">
+                        Reading Archive
+                      </span>
+                    </div>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white/95 tracking-tight leading-[1.1] mb-2">
                       Read:<span className="italic text-[#D4C3A3]">log</span>
                     </h1>
+                    <p className="text-[10px] sm:text-xs font-serif italic text-white/35 max-w-[280px] sm:max-w-none leading-relaxed">
+                      &ldquo;읽은 책들의 온기가 남아있는 곳&rdquo;
+                    </p>
                   </div>
+
+                  {/* Decorative corner accent */}
+                  <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-8 h-8 border-t border-r border-white/10 rounded-tr-lg"></div>
                 </div>
               </ParallaxHero>
             </StaggeredReveal>
 
-            {/* Spacer */}
-            <div className="h-6 sm:h-8 w-full border-b border-transparent via-[#DED8CE]/60 dark:via-[#363330]/60 bg-gradient-to-r from-transparent to-transparent mt-1"></div>
+            {/* Decorative Spacer */}
+            <div className="flex items-center gap-4 mt-6 sm:mt-8 mb-2">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#DED8CE]/50 dark:via-[#363330]/50 to-transparent"></div>
+              <div className="w-1 h-1 rounded-full bg-[#DED8CE] dark:bg-[#363330]"></div>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-[#DED8CE]/50 dark:via-[#363330]/50 to-transparent"></div>
+            </div>
           </section>
 
-          {/* Book Archive */}
-          <section className="w-full pt-6 sm:pt-8 pb-24"> 
+          {/* ===== Book Archive ===== */}
+          <section className="w-full pt-4 sm:pt-6 pb-16 sm:pb-24"> 
             <BookArchive books={books} readingGoal={readingGoal} />
           </section>
 
-          {/* Footer */}
-          <footer className="pb-12 pt-4">
-            <div className="w-full h-px bg-gradient-to-r from-transparent via-[#DED8CE]/40 dark:via-[#363330]/40 to-transparent mb-6"></div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <p className="text-[9px] sm:text-[10px] font-sans text-[#C4BCB3] dark:text-[#524B43] tracking-wider">
-                  © Shelf. by Jaewon
-                </p>
-                <ThemeToggle />
-              </div>
-              <p className="text-[9px] sm:text-[10px] font-serif italic text-[#C4BCB3] dark:text-[#524B43] max-w-[180px] sm:max-w-none text-right">
-                <RandomQuote />
+          {/* ===== Footer ===== */}
+          <footer className="pb-12 sm:pb-16 pt-4">
+            <div className="w-full h-px bg-gradient-to-r from-transparent via-[#DED8CE]/30 dark:via-[#363330]/30 to-transparent mb-6"></div>
+            <div className="flex flex-col items-center gap-3">
+              <p className="text-[9px] sm:text-[10px] font-serif italic text-[#C4BCB3] dark:text-[#524B43]">
+                Personal Reading Archive
+              </p>
+              <p className="text-[8px] font-sans text-[#C4BCB3]/40 dark:text-[#524B43]/40 tracking-[0.15em]">
+                Shelf.
               </p>
             </div>
           </footer>

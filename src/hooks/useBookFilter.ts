@@ -3,7 +3,7 @@ import type { Book } from '@/types/book';
 
 export function useBookFilter(initialBooks: Book[]) {
   const [selectedTag, setSelectedTag] = useState<string>('All');
-  const [sortOption, setSortOption] = useState<'newest' | 'oldest' | 'title' | 'rating'>('newest');
+  const [sortOption, setSortOption] = useState<'newest' | 'oldest' | 'title' | 'rating'>('rating');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Extract all unique tags

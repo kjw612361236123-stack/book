@@ -63,6 +63,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
+      data-scroll-behavior="smooth"
       className={`${geistSans.variable} ${geistMono.variable} ${nanumMyeongjo.variable} h-full antialiased`}
       suppressHydrationWarning
     >
@@ -70,7 +71,17 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <link rel="apple-touch-icon" href="/favicon.ico" />
         <script dangerouslySetInnerHTML={{
-          __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})();`
+          __html: `(function(){
+            try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}
+            if (typeof console !== 'undefined') {
+              var origError = console.error;
+              console.error = function() {
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].includes("Can't perform a React state update on a component that hasn't mounted yet.")) { return; }
+                if (arguments[0] && typeof arguments[0] === 'string' && arguments[0].includes("warnAboutUpdateOnNotYetMountedFiberInDEV")) { return; }
+                origError.apply(console, arguments);
+              };
+            }
+          })();`
         }} />
       </head>
       <body className="min-h-full flex flex-col overscroll-none">

@@ -29,11 +29,16 @@ function getRelativeDate(dateStr: string): string {
   return `${Math.floor(diffDays / 365)}년 전`;
 }
 
+function ratingToStars(rating: string): number {
+  return (rating.match(/⭐/g) || []).length;
+}
+
 export default function BookDiaryCard({ id, title, date, tags, thumbnail, description, rating }: BookCardProps) {
   const formattedDate = date?.substring(0, 7)?.replace('-', '.') || '';
   const relativeDate = getRelativeDate(date);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showQuickLook, setShowQuickLook] = useState(false);
+  const starCount = rating ? ratingToStars(rating) : 0;
 
   const handleTouchStart = useCallback(() => {
     longPressTimer.current = setTimeout(() => {
@@ -72,131 +77,160 @@ export default function BookDiaryCard({ id, title, date, tags, thumbnail, descri
         onClick={(e) => { if (showQuickLook) e.preventDefault(); }}
       >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          whileHover={{ y: -4 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, margin: "-40px" }}
+          whileHover={{ y: -8 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="group flex flex-col h-full cursor-pointer"
         >
           {/* Cover Image */}
-          <div className="relative aspect-[3/4.2] w-full overflow-hidden rounded-2xl sm:rounded-[20px] bg-[#EEEBE3] dark:bg-[#201E1C] shadow-[0_2px_20px_rgba(139,115,85,0.06)] dark:shadow-[0_2px_20px_rgba(0,0,0,0.25)] group-hover:shadow-[0_12px_40px_rgba(139,115,85,0.12)] dark:group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition-shadow duration-500">
+          <div className="relative aspect-[3/4.3] w-full overflow-hidden rounded-2xl sm:rounded-[22px] bg-[#EEEBE3] dark:bg-[#201E1C]">
+            {/* Soft ambient shadow */}
+            <div className="absolute -inset-px rounded-2xl sm:rounded-[22px] shadow-[0_4px_24px_rgba(139,115,85,0.08)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] group-hover:shadow-[0_20px_56px_rgba(139,115,85,0.16)] dark:group-hover:shadow-[0_20px_56px_rgba(0,0,0,0.6)] transition-shadow duration-700 pointer-events-none z-10"></div>
+            
             {thumbnail ? (
               <img
                 src={thumbnail}
                 alt={title}
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.06]"
+                loading="lazy"
               />
             ) : (
-              /* Empty thumbnail — CSS book illustration */
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#F5F0E8] to-[#EEEBE3] dark:from-[#201E1C] dark:to-[#2A2826]">
-                <div className="relative w-12 h-14 mb-3">
-                  {/* Book spine */}
-                  <div className="absolute left-0 top-0 w-[3px] h-full bg-[#C4B9A8] dark:bg-[#6B6560] rounded-l-sm" />
-                  {/* Book cover */}
-                  <div className="absolute left-[3px] top-0 right-0 h-full bg-[#DED8CE] dark:bg-[#363330] rounded-r-sm border border-[#C4B9A8]/30 dark:border-[#524B43]/30" />
-                  {/* Book lines */}
-                  <div className="absolute left-[10px] top-[10px] right-[6px] space-y-1.5">
-                    <div className="h-[1.5px] bg-[#A39E98]/30 dark:bg-[#7A746D]/30 w-3/4" />
-                    <div className="h-[1.5px] bg-[#A39E98]/30 dark:bg-[#7A746D]/30 w-1/2" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#F8F4ED] to-[#EEEBE3] dark:from-[#242220] dark:to-[#1E1C1A]">
+                {/* Minimal book icon */}
+                <div className="relative w-10 h-13 mb-3 opacity-60">
+                  <div className="absolute left-0 top-0 w-[2.5px] h-full bg-[#C4B9A8] dark:bg-[#6B6560] rounded-l-sm" />
+                  <div className="absolute left-[2.5px] top-0 right-0 h-full bg-[#DED8CE] dark:bg-[#363330] rounded-r-sm" />
+                  <div className="absolute left-[9px] top-[8px] right-[5px] space-y-1.5">
+                    <div className="h-[1px] bg-[#A39E98]/25 dark:bg-[#7A746D]/25 w-3/4" />
+                    <div className="h-[1px] bg-[#A39E98]/25 dark:bg-[#7A746D]/25 w-1/2" />
                   </div>
                 </div>
-                <span className="text-[10px] font-serif text-[#8B7355] dark:text-[#D4C3A3] text-center px-4 line-clamp-2 leading-tight">{title}</span>
+                <span className="text-[10px] font-serif text-[#8B7355] dark:text-[#D4C3A3] text-center px-4 line-clamp-2 leading-snug">{title}</span>
               </div>
             )}
             
-            {/* Hover overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            {/* Cinematic hover gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-[1]"></div>
             
-            {/* Rating badge */}
-            {rating && (
-              <div className="absolute top-3 right-3 bg-white/85 dark:bg-[#1A1817]/85 backdrop-blur-md rounded-full px-2.5 py-1 text-[8px] sm:text-[9px] tracking-wider text-[#8B7355] dark:text-[#D4C3A3] shadow-sm">
-                {rating}
+            {/* Rating badge — premium star chip */}
+            {starCount > 0 && (
+              <div className="absolute top-2.5 right-2.5 z-[2]">
+                <div className="flex items-center gap-[2px] bg-white/90 dark:bg-[#1A1817]/90 backdrop-blur-xl rounded-full px-2 py-[5px] shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] border border-white/20 dark:border-white/5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span 
+                      key={i} 
+                      className={`text-[7px] sm:text-[8px] leading-none ${i < starCount ? 'text-amber-500' : 'text-[#DED8CE] dark:text-[#363330]'}`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
 
-            {/* Bookmark indicator */}
-            <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-1 group-hover:translate-y-0">
-              <div className="w-7 h-7 rounded-full bg-white/90 dark:bg-[#2A2826]/90 backdrop-blur-sm flex items-center justify-center shadow-md">
-                <svg className="w-3.5 h-3.5 text-[#3A3530] dark:text-[#EFEFE9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                </svg>
-              </div>
+            {/* Hover: Read indicator */}
+            <div className="absolute bottom-3 left-3 right-3 z-[2] flex items-center justify-between opacity-0 group-hover:opacity-100 transition-all duration-400 translate-y-2 group-hover:translate-y-0">
+              <span className="text-[8px] sm:text-[9px] font-sans text-white/80 tracking-wide">기록 펼쳐보기</span>
             </div>
+
           </div>
 
-          {/* Meta */}
+          {/* Meta — Refined typography */}
           <div className="pt-3 sm:pt-3.5 px-0.5">
-            <h3 className="text-[13px] sm:text-sm font-serif text-[#3A3530] dark:text-[#EFEFE9] leading-snug mb-1 group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-colors duration-300 line-clamp-2">
+            <h3 className="text-[12px] sm:text-[13px] font-serif text-[#3A3530] dark:text-[#EFEFE9] leading-snug mb-1.5 group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-colors duration-300 line-clamp-2 tracking-tight">
               {title}
             </h3>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[9px] sm:text-[10px] font-sans text-[#BAAFA0] dark:text-[#7A746D]">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[9px] sm:text-[10px] font-sans text-[#BAAFA0] dark:text-[#7A746D] tabular-nums">
                 {formattedDate}
               </span>
               {relativeDate && (
                 <>
-                  <span className="text-[#DED8CE] dark:text-[#363330] text-[8px]">·</span>
+                  <span className="text-[#DED8CE] dark:text-[#363330] text-[6px]">●</span>
                   <span className="text-[9px] sm:text-[10px] font-sans text-[#C4B9A8] dark:text-[#6B6560] italic">
                     {relativeDate}
                   </span>
                 </>
               )}
-              {tags[0] && (
-                <>
-                  <span className="text-[#DED8CE] dark:text-[#363330] text-[8px]">·</span>
-                  <span className="text-[9px] sm:text-[10px] font-sans text-[#BAAFA0] dark:text-[#7A746D]">{tags[0]}</span>
-                </>
-              )}
             </div>
+            {tags[0] && (
+              <span className="inline-block mt-1.5 text-[8px] sm:text-[9px] font-sans text-[#A39E98] dark:text-[#7A746D] bg-[#F5F0E8]/80 dark:bg-[#201E1C]/80 px-2 py-0.5 rounded-full">
+                {tags[0]}
+              </span>
+            )}
           </div>
         </motion.div>
       </Link>
 
-      {/* Quick Look Modal (Long Press) */}
+      {/* Quick Look Modal (Long Press) — Premium */}
       <AnimatePresence>
         {showQuickLook && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm flex items-center justify-center p-8"
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-md flex items-end sm:items-center justify-center"
             onClick={() => setShowQuickLook(false)}
           >
             <motion.div
-              initial={{ scale: 0.85, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-white dark:bg-[#1E1C1A] rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '100%', opacity: 0 }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="bg-[#FDFBF7] dark:bg-[#1E1C1A] rounded-t-[28px] sm:rounded-[28px] w-full sm:max-w-sm overflow-hidden shadow-2xl max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             >
-              {thumbnail && (
-                <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden mb-5 shadow-lg">
-                  <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
+              {/* Drag handle (mobile) */}
+              <div className="sm:hidden flex justify-center pt-3 pb-1">
+                <div className="w-9 h-1 rounded-full bg-[#DED8CE] dark:bg-[#363330]"></div>
+              </div>
+              
+              <div className="p-5 sm:p-6 overflow-y-auto max-h-[85vh]">
+                {thumbnail && (
+                  <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden mb-5 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+                    <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
+                  </div>
+                )}
+                
+                <h3 className="font-serif text-lg text-[#3A3530] dark:text-[#EFEFE9] mb-2 tracking-tight">{title}</h3>
+                
+                {starCount > 0 && (
+                  <div className="flex items-center gap-1 mb-3">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <span key={i} className={`text-sm ${i < starCount ? 'text-amber-500' : 'text-[#DED8CE] dark:text-[#363330]'}`}>★</span>
+                    ))}
+                  </div>
+                )}
+                
+                {description && (
+                  <p className="text-xs font-sans text-[#8B8580] dark:text-[#A39E98] leading-relaxed line-clamp-4 mb-5">{description}</p>
+                )}
+                
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-5">
+                    {tags.map(tag => (
+                      <span key={tag} className="text-[9px] px-2.5 py-1 rounded-full bg-[#F5F0E8] dark:bg-[#201E1C] text-[#8B7355] dark:text-[#D4C3A3] font-sans">{tag}</span>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="flex gap-2.5">
+                  <Link
+                    href={`/book/${id}`}
+                    className="flex-1 text-center text-xs sm:text-sm font-sans py-3 bg-[#3A3530] dark:bg-[#D4C3A3] text-white dark:text-[#1A1817] rounded-2xl active:scale-[0.97] transition-transform font-medium"
+                  >
+                    자세히 보기
+                  </Link>
+                  <button
+                    onClick={() => setShowQuickLook(false)}
+                    className="px-5 py-3 text-xs sm:text-sm font-sans text-[#A39E98] rounded-2xl border border-[#E8E3D8] dark:border-[#2C2826] active:scale-[0.97] transition-transform"
+                  >
+                    닫기
+                  </button>
                 </div>
-              )}
-              <h3 className="font-serif text-lg text-[#3A3530] dark:text-[#EFEFE9] mb-2">{title}</h3>
-              {rating && (
-                <p className="text-sm text-[#8B7355] dark:text-[#D4C3A3] mb-2">{rating}</p>
-              )}
-              {description && (
-                <p className="text-xs font-sans text-[#A39E98] dark:text-[#7A746D] leading-relaxed line-clamp-3">{description}</p>
-              )}
-              <div className="mt-4 flex gap-2">
-                <Link
-                  href={`/book/${id}`}
-                  className="flex-1 text-center text-xs sm:text-sm font-sans py-2.5 bg-[#3A3530] dark:bg-[#D4C3A3] text-white dark:text-[#1A1817] rounded-full active:scale-[0.97] transition-transform"
-                >
-                  자세히 보기
-                </Link>
-                <button
-                  onClick={() => setShowQuickLook(false)}
-                  className="px-4 py-2.5 text-xs sm:text-sm font-sans text-[#A39E98] rounded-full border border-[#E8E3D8] dark:border-[#2C2826] active:scale-[0.97] transition-transform"
-                >
-                  닫기
-                </button>
               </div>
             </motion.div>
           </motion.div>

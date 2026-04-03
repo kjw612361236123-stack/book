@@ -15,7 +15,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={cycle}
-      className="w-8 h-8 rounded-full flex items-center justify-center bg-[#EEEBE3] dark:bg-[#201E1C] text-[#A39E98] hover:text-[#3A3530] dark:hover:text-[#EFEFE9] transition-all duration-300 border border-[#E8E3D8]/50 dark:border-[#2C2826]/50"
+      className="w-8 h-8 rounded-full flex items-center justify-center bg-[#EEEBE3] dark:bg-[#201E1C] text-[#A39E98] dark:text-[#7A746D] hover:text-[#6B6560] dark:hover:text-[#D4C3A3] transition-all duration-300 outline-none focus:outline-none focus:ring-0 border-transparent shadow-inner"
       title={theme === 'system' ? '시스템 모드' : theme === 'light' ? '라이트 모드' : '다크 모드'}
     >
       {theme === 'dark' ? (

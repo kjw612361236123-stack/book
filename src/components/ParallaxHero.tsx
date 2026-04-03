@@ -10,12 +10,13 @@ export default function ParallaxHero({ children }: { children: React.ReactNode }
     offset: ['start start', 'end start'],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '15%']);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
+  const y = useTransform(scrollYProgress, [0, 1], ['0%', '18%']);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 0.9, 0.7]);
 
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-[16px] sm:rounded-[28px]">
-      <motion.div style={{ y, scale }}>
+    <div ref={ref} className="relative overflow-hidden rounded-[20px] sm:rounded-[28px]">
+      <motion.div style={{ y, scale, opacity }}>
         {children}
       </motion.div>
     </div>

@@ -70,7 +70,12 @@ export const getPage = async (pageId: string) => {
         const schema = collection.value?.schema;
         if (schema) {
           for (const key of Object.keys(schema)) {
-            if (schema[key].name === '코멘트' || schema[key].name === '표지') {
+            // Remove file-type properties to prevent GracefulImage state-update-before-mount crash
+            if (
+              schema[key].name === '코멘트' ||
+              schema[key].name === '표지' ||
+              schema[key].type === 'file'
+            ) {
               delete schema[key];
             }
           }
@@ -87,27 +92,47 @@ export const getPage = async (pageId: string) => {
 
 export const getPageProperties = async (pageId: string) => {
   if (!process.env.NOTION_API_KEY) {
-    return { comment: '', thumbnail: '' };
+    return { comment: '', thumbnail: '', author: '', keywords: [], status: '', playlist: '' };
   }
 
   try {
     const response = await notion.pages.retrieve({ page_id: pageId });
     const properties = (response as any).properties;
     
-    // Extract comment property
+    // Extract comment
     const commentProp = properties['코멘트'];
     const comment = commentProp?.rich_text?.[0]?.plain_text || '';
 
-    // Extract thumbnail property
+    // Extract thumbnail
     const filesProp = properties['표지'] || Object.values(properties).find((p: any) => p.type === 'files') as any;
     const thumbnail = filesProp?.files?.[0]?.file?.url || filesProp?.files?.[0]?.external?.url || '';
     
+    // Extract author
+    const authorProp = properties['저자'];
+    const author = authorProp?.rich_text?.[0]?.plain_text || '';
+
+    // Extract keywords
+    const keywordsProp = properties['키워드'];
+    const keywords = keywordsProp?.multi_select?.map((k: any) => k.name) || [];
+
+    // Extract status
+    const statusProp = properties['상태'];
+    const status = statusProp?.status?.name || '';
+
+    // Extract playlist URL
+    const playlistProp = properties['Playlist'];
+    const playlist = playlistProp?.url || '';
+
     return {
       comment,
-      thumbnail
+      thumbnail,
+      author,
+      keywords,
+      status,
+      playlist,
     };
   } catch (error) {
     console.error(`Error fetching properties for page ${pageId}:`, error);
-    return { comment: '', thumbnail: '' };
+    return { comment: '', thumbnail: '', author: '', keywords: [], status: '', playlist: '' };
   }
 };

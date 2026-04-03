@@ -4,6 +4,10 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import type { Book } from '@/types/book';
 
+function ratingToStars(rating: string): number {
+  return (rating.match(/⭐/g) || []).length;
+}
+
 export default function BookTimeline({ books }: { books: Book[] }) {
   if (books.length === 0) return null;
 
@@ -20,61 +24,75 @@ export default function BookTimeline({ books }: { books: Book[] }) {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative border-l border-[#E8E3D8] dark:border-[#2C2826] ml-4 md:ml-8 mt-6 pb-12"
+      className="relative ml-3 sm:ml-6 mt-4 pb-12"
     >
+      {/* Timeline line */}
+      <div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-[#E8E3D8] via-[#E8E3D8] to-transparent dark:from-[#2C2826] dark:via-[#2C2826] dark:to-transparent"></div>
+
        {Object.entries(grouped).map(([month, monthBooks], index) => (
          <motion.div 
            key={month} 
-           initial={{ opacity: 0, x: -20 }}
+           initial={{ opacity: 0, x: -16 }}
            whileInView={{ opacity: 1, x: 0 }}
-           viewport={{ once: true, margin: "-80px" }}
-           transition={{ delay: (index % 5) * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-           className="relative pl-7 md:pl-12 mb-12 last:mb-0"
+           viewport={{ once: true, margin: "-60px" }}
+           transition={{ delay: (index % 5) * 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+           className="relative pl-6 sm:pl-10 mb-10 last:mb-0"
          >
-            {/* Timeline dot */}
-            <span className="absolute -left-[5px] top-2 w-2.5 h-2.5 rounded-full bg-[#8B7355] dark:bg-[#D4C3A3] shadow-[0_0_0_4px_#FDFBF7] dark:shadow-[0_0_0_4px_#1A1817]" />
+            {/* Timeline dot — pulsing */}
+            <div className="absolute -left-[5px] top-2.5 flex items-center justify-center">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#8B7355] dark:bg-[#D4C3A3] relative z-10" />
+              <span className="absolute w-5 h-5 rounded-full bg-[#8B7355]/10 dark:bg-[#D4C3A3]/10 animate-pulse-soft" />
+            </div>
             
-            <h2 className="text-lg md:text-xl font-serif text-[#3A3530] dark:text-[#EFEFE9] mb-5 flex items-center gap-3">
+            <h2 className="text-base sm:text-lg font-serif text-[#3A3530] dark:text-[#EFEFE9] mb-4 flex items-center gap-2.5">
               {month}
-              <span className="text-[10px] sm:text-xs font-sans text-[#A39E98] dark:text-[#7A746D] bg-[#EEEBE3]/70 dark:bg-[#201E1C] px-2 py-0.5 rounded-full tabular-nums">
+              <span className="text-[9px] sm:text-[10px] font-sans text-[#8B7355] dark:text-[#D4C3A3] bg-[#F5F0E8] dark:bg-[#242220] px-2 py-0.5 rounded-lg tabular-nums">
                 {monthBooks.length}권
               </span>
             </h2>
             
-            <div className="flex flex-col gap-3 sm:gap-4">
-              {monthBooks.map((book, i) => (
-                <Link 
-                  href={`/book/${book.id}`} 
-                  key={book.id} 
-                  className="flex gap-4 group bg-white dark:bg-[#1E1C1A] p-3.5 sm:p-4 rounded-2xl border border-[#E8E3D8]/60 dark:border-[#2C2826] shadow-[0_1px_8px_rgba(0,0,0,0.02)] dark:shadow-none hover:shadow-[0_8px_30px_rgba(139,115,85,0.08)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  <div className="w-16 sm:w-20 shrink-0 aspect-[3/4] bg-[#EEEBE3] dark:bg-[#201E1C] rounded-xl overflow-hidden relative">
-                    {book.thumbnail ? (
-                      <img src={book.thumbnail} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={book.title} />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-[9px] text-[#8B7355] font-serif text-center p-2">{book.title}</div>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col flex-1 py-0.5 min-w-0">
-                    <h3 className="font-serif text-[#3A3530] dark:text-[#EFEFE9] text-sm sm:text-base font-medium mb-1 group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-colors line-clamp-1">{book.title}</h3>
-                    <p className="text-xs text-[#A39E98] dark:text-[#7A746D] line-clamp-2 font-sans leading-relaxed mb-2">{book.description}</p>
-                    
-                    <div className="mt-auto flex flex-wrap gap-1.5 items-center">
-                       {book.tags.slice(0, 2).map((t: string) => (
-                         <span key={t} className="text-[9px] px-2 py-0.5 rounded-full bg-[#F5F0E8] dark:bg-[#201E1C] text-[#8E8B85] dark:text-[#A39E98] font-sans">
-                           {t}
-                         </span>
-                       ))}
-                       {book.rating && (
-                         <span className="text-[9px] text-[#C4B79D] dark:text-[#D4C3A3] tracking-wider ml-auto">
-                           {book.rating}
-                         </span>
-                       )}
+            <div className="flex flex-col gap-2.5 sm:gap-3">
+              {monthBooks.map((book) => {
+                const starCount = book.rating ? ratingToStars(book.rating) : 0;
+                return (
+                  <Link 
+                    href={`/book/${book.id}`} 
+                    key={book.id} 
+                    className="flex gap-3.5 group bg-white/60 dark:bg-[#1E1C1A]/60 backdrop-blur-sm p-3 sm:p-3.5 rounded-2xl border border-[#E8E3D8]/40 dark:border-[#2C2826]/40 hover:border-[#D4C3A3]/30 dark:hover:border-[#8B7355]/20 shadow-[0_1px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_24px_rgba(139,115,85,0.06)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)] hover:-translate-y-0.5 transition-all duration-400"
+                  >
+                    <div className="w-14 sm:w-16 shrink-0 aspect-[2.5/4] bg-[#EEEBE3] dark:bg-[#201E1C] rounded-xl overflow-hidden relative shadow-sm">
+                      {book.thumbnail ? (
+                        <img src={book.thumbnail} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={book.title} loading="lazy" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-[8px] text-[#8B7355] font-serif text-center p-1.5">{book.title}</div>
+                      )}
                     </div>
-                  </div>
-                </Link>
-              ))}
+
+                    <div className="flex flex-col flex-1 py-0.5 min-w-0 justify-center">
+                      <h3 className="font-serif text-[#3A3530] dark:text-[#EFEFE9] text-[13px] sm:text-sm mb-1 group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-colors line-clamp-1 tracking-tight">{book.title}</h3>
+                      
+                      {book.description && (
+                        <p className="text-[10px] sm:text-[11px] text-[#A39E98] dark:text-[#7A746D] line-clamp-1 font-sans leading-relaxed mb-1.5">{book.description}</p>
+                      )}
+                      
+                      <div className="flex items-center gap-2">
+                        {book.tags.slice(0, 2).map((t: string) => (
+                          <span key={t} className="text-[8px] sm:text-[9px] px-2 py-0.5 rounded-md bg-[#F5F0E8]/80 dark:bg-[#242220]/80 text-[#8B7355] dark:text-[#D4C3A3] font-sans">
+                            {t}
+                          </span>
+                        ))}
+                        {starCount > 0 && (
+                          <div className="flex gap-[1px] ml-auto">
+                            {Array.from({ length: starCount }).map((_, j) => (
+                              <span key={j} className="text-[8px] text-amber-500">★</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
          </motion.div>
        ))}
