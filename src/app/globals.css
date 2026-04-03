@@ -22,16 +22,15 @@
 }
 
 .dark {
-  :root {
-    --background: #1A1817;
-    --foreground: #EFEFE9;
-    --accent: #D4C3A3;
-    --accent-light: #8B7355;
-    --muted: #7A746D;
-    --card: #201E1C;
-    --border: #2C2826;
-  }
+  --background: #171514;
+  --foreground: #F2EFE9;
+  --accent: #D4C3A3;
+  --accent-light: #8B7355;
+  --muted: #827C75;
+  --card: #201E1C;
+  --border: #33302D;
 }
+
 
 * {
   -webkit-tap-highlight-color: transparent;
@@ -358,5 +357,43 @@ img {
 .notion-paper-override .notion-header,
 .notion-paper-override .notion-nav-header {
   display: none !important;
+}
+
+/* ===== Deep Aesthetic Customization for Notion Text Blocks ===== */
+.notion-paper-override .notion-quote {
+  border-left: 3px solid var(--accent);
+  padding: 0.8rem 1.2rem;
+  margin: 1.5rem 0;
+  background: var(--card);
+  border-radius: 4px 12px 12px 4px;
+  font-family: var(--font-serif) !important;
+  font-style: italic;
+  color: var(--accent) !important;
+  font-size: 1.05rem;
+}
+
+.notion-paper-override .notion-callout {
+  border: 1px solid var(--border);
+  background: var(--card) !important;
+  border-radius: 16px;
+  padding: 1.2rem;
+  font-family: var(--font-serif) !important;
+  color: var(--foreground) !important;
+}
+
+.notion-paper-override .notion-callout-text {
+  font-family: var(--font-sans) !important;
+  line-height: 1.8;
+}
+
+.notion-paper-override .notion-hr {
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+.notion-paper-override .notion-code {
+  background: var(--card) !important;
+  border-radius: 12px;
+  border: 1px solid var(--border);
 }
 

@@ -79,6 +79,28 @@ export default async function BookPost({ params }: { params: Promise<{ id: strin
 
   return (
     <main className="min-h-screen bg-[#FDFBF7] dark:bg-[#1A1817] selection:bg-[#E8E3D8] dark:selection:bg-[#3A3530]">
+      {/* SEO JSON-LD Script */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Book',
+            name: currentBook?.title || 'Unknown Title',
+            author: { '@type': 'Person', name: 'Author' },
+            image: thumbnail || '',
+            review: {
+              '@type': 'Review',
+              author: { '@type': 'Person', name: 'Jaewon Kim' },
+              reviewRating: {
+                '@type': 'Rating',
+                ratingValue: starCount > 0 ? starCount : 5,
+                bestRating: '5',
+              },
+            },
+          }),
+        }}
+      />
       {/* Subtle noise texture */}
       <div className="fixed -inset-[200%] opacity-[0.012] dark:opacity-[0.03] pointer-events-none mix-blend-multiply animate-noise" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
 
@@ -100,7 +122,7 @@ export default async function BookPost({ params }: { params: Promise<{ id: strin
               <div className="relative mb-7 sm:mb-8">
                 <div className="absolute inset-0 translate-y-2 bg-[#8B7355]/8 dark:bg-black/20 rounded-2xl blur-xl scale-[0.92]"></div>
                 <div className="w-[130px] sm:w-[150px] md:w-[170px] aspect-[2/3] rounded-xl sm:rounded-2xl overflow-hidden relative shadow-[0_8px_32px_rgba(139,115,85,0.15)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] border border-white/15 dark:border-white/5">
-                  <Image src={thumbnail} alt={currentBook?.title || ''} fill className="object-cover" unoptimized />
+                  <Image src={thumbnail} alt={currentBook?.title || ''} fill className="object-cover" sizes="(max-width: 640px) 240px, (max-width: 768px) 300px, 350px" />
                   {/* Spine edge */}
                   <div className="absolute inset-y-0 left-0 w-[2px] bg-gradient-to-r from-black/15 to-transparent"></div>
                 </div>
@@ -187,7 +209,7 @@ export default async function BookPost({ params }: { params: Promise<{ id: strin
                   <Link key={book.id} href={`/book/${book.id}`} className="group">
                     <div className="aspect-[2.5/4] rounded-xl sm:rounded-2xl overflow-hidden bg-[#EEEBE3] dark:bg-[#201E1C] relative shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_24px_rgba(139,115,85,0.1)] dark:group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)] group-hover:-translate-y-1 transition-all duration-500">
                       {book.thumbnail ? (
-                        <Image src={book.thumbnail} alt={book.title} fill className="object-cover group-hover:scale-[1.03] transition-transform duration-700" unoptimized />
+                        <Image src={book.thumbnail} alt={book.title} fill className="object-cover group-hover:scale-[1.03] transition-transform duration-700" sizes="(max-width: 640px) 150px, 200px" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center p-3">
                           <span className="text-[9px] font-serif text-[#8B7355] dark:text-[#D4C3A3] text-center line-clamp-3">{book.title}</span>

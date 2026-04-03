@@ -25,7 +25,7 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
   const [itemsPerPage, setItemsPerPage] = useState(8);
 
   useEffect(() => {
-    const handleResize = () => setItemsPerPage(window.innerWidth < 640 ? 4 : 8);
+    const handleResize = () => setItemsPerPage(window.innerWidth < 640 ? 6 : 8);
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -36,9 +36,9 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
   }, [selectedTag, viewMode, sortOption, searchQuery]);
 
   const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
-  const currentBooks = viewMode === 'timeline' 
-    ? filteredBooks 
-    : filteredBooks.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const currentBooks = viewMode === 'gallery'
+    ? filteredBooks.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    : filteredBooks;
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
@@ -188,7 +188,7 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
         )}
 
         {/* Pagination — Premium dots */}
-        {viewMode !== 'timeline' && totalPages > 1 && (
+        {viewMode === 'gallery' && totalPages > 1 && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             className="flex items-center justify-center gap-3 mt-14 sm:mt-20 mb-6"

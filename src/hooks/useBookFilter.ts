@@ -1,10 +1,38 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import type { Book } from '@/types/book';
 
 export function useBookFilter(initialBooks: Book[]) {
-  const [selectedTag, setSelectedTag] = useState<string>('All');
-  const [sortOption, setSortOption] = useState<'newest' | 'oldest' | 'title' | 'rating'>('rating');
-  const [searchQuery, setSearchQuery] = useState('');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const [selectedTag, setSelectedTag] = useState<string>(searchParams.get('tag') || 'All');
+  const [sortOption, setSortOption] = useState<'newest' | 'oldest' | 'title' | 'rating'>(
+    (searchParams.get('sort') as any) || 'rating'
+  );
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+
+  // Synchronize state with URL parameters
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (selectedTag === 'All') params.delete('tag');
+    else params.set('tag', selectedTag);
+    
+    if (sortOption === 'rating') params.delete('sort');
+    else params.set('sort', sortOption);
+    
+    if (!searchQuery) params.delete('q');
+    else params.set('q', searchQuery);
+    
+    const newParamsStr = params.toString();
+    const currentParamsStr = searchParams.toString();
+    
+    if (newParamsStr !== currentParamsStr) {
+      router.replace(`${pathname}${newParamsStr ? `?${newParamsStr}` : ''}`, { scroll: false });
+    }
+  }, [selectedTag, sortOption, searchQuery, pathname, router, searchParams]);
 
   // Extract all unique tags
   const allTags = useMemo(() => {

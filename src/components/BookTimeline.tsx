@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import type { Book } from '@/types/book';
 
 function ratingToStars(rating: string): number {
@@ -62,7 +63,7 @@ export default function BookTimeline({ books }: { books: Book[] }) {
                   >
                     <div className="w-14 sm:w-16 shrink-0 aspect-[2.5/4] bg-[#EEEBE3] dark:bg-[#201E1C] rounded-xl overflow-hidden relative shadow-sm">
                       {book.thumbnail ? (
-                        <img src={book.thumbnail} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={book.title} loading="lazy" />
+                        <Image src={book.thumbnail} fill className="object-cover group-hover:scale-105 transition-transform duration-700" alt={book.title} sizes="(max-width: 640px) 100px, 150px" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-[8px] text-[#8B7355] font-serif text-center p-1.5">{book.title}</div>
                       )}

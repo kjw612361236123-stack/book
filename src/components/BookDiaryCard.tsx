@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface BookCardProps {
   id: string;
@@ -90,11 +91,12 @@ export default function BookDiaryCard({ id, title, date, tags, thumbnail, descri
             <div className="absolute -inset-px rounded-2xl sm:rounded-[22px] shadow-[0_4px_24px_rgba(139,115,85,0.08)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)] group-hover:shadow-[0_20px_56px_rgba(139,115,85,0.16)] dark:group-hover:shadow-[0_20px_56px_rgba(0,0,0,0.6)] transition-shadow duration-700 pointer-events-none z-10"></div>
             
             {thumbnail ? (
-              <img
+              <Image
                 src={thumbnail}
                 alt={title}
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.06]"
-                loading="lazy"
+                fill
+                sizes="(max-width: 640px) 150px, (max-width: 1024px) 200px, 300px"
+                className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.06]"
               />
             ) : (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#F8F4ED] to-[#EEEBE3] dark:from-[#242220] dark:to-[#1E1C1A]">
@@ -191,7 +193,7 @@ export default function BookDiaryCard({ id, title, date, tags, thumbnail, descri
               <div className="p-5 sm:p-6 overflow-y-auto max-h-[85vh]">
                 {thumbnail && (
                   <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden mb-5 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
-                    <img src={thumbnail} alt={title} className="w-full h-full object-cover" />
+                    <Image src={thumbnail} alt={title} fill sizes="(max-width: 640px) 250px, 400px" className="object-cover" />
                   </div>
                 )}
                 

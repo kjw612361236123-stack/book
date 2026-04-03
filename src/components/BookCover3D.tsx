@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface BookCover3DProps {
   src: string;
@@ -79,10 +80,12 @@ export default function BookCover3D({ src, alt }: BookCover3DProps) {
               : '0 10px 30px -8px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(255,255,255,0.05)',
           }}
         >
-          <img 
+          <Image 
             src={src} 
             alt={alt}
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            sizes="(max-width: 640px) 150px, (max-width: 768px) 180px, 200px"
+            className="object-cover"
           />
           
           {/* Glossy light reflection */}

@@ -1,4 +1,5 @@
 import { getDatabase } from '@/lib/notion';
+import { Suspense } from 'react';
 import BookArchive from '@/components/BookArchive';
 import PageEntrance, { StaggeredReveal } from '@/components/PageEntrance';
 import VisitorCounter from '@/components/VisitorCounter';
@@ -97,19 +98,26 @@ export default async function Home() {
 
           {/* ===== Book Archive ===== */}
           <section className="w-full pt-4 sm:pt-6 pb-16 sm:pb-24"> 
-            <BookArchive books={books} readingGoal={readingGoal} />
+            <Suspense fallback={<div className="h-96 w-full flex items-center justify-center text-[#A39E98] font-serif italic text-sm">Loading Archive...</div>}>
+              <BookArchive books={books} readingGoal={readingGoal} />
+            </Suspense>
           </section>
 
           {/* ===== Footer ===== */}
           <footer className="pb-12 sm:pb-16 pt-4">
             <div className="w-full h-px bg-gradient-to-r from-transparent via-[#DED8CE]/30 dark:via-[#363330]/30 to-transparent mb-6"></div>
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-2">
               <p className="text-[9px] sm:text-[10px] font-serif italic text-[#C4BCB3] dark:text-[#524B43]">
                 Personal Reading Archive
               </p>
-              <p className="text-[8px] font-sans text-[#C4BCB3]/40 dark:text-[#524B43]/40 tracking-[0.15em]">
-                Shelf.
-              </p>
+              <div className="group flex flex-col items-center">
+                <p className="text-[8px] font-sans text-[#C4BCB3]/50 dark:text-[#524B43]/50 tracking-[0.2em] mb-3">
+                  Shelf.
+                </p>
+                <p className="text-[10px] sm:text-[11px] font-sans text-[#A39E98] dark:text-[#7A746D] tracking-wide opacity-80 group-hover:opacity-100 group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-all duration-500 cursor-default">
+                  Designed & Crafted by <span className="font-medium">Jaewon Kim.</span>
+                </p>
+              </div>
             </div>
           </footer>
           
