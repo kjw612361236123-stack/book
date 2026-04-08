@@ -106,11 +106,12 @@ export default async function Home() {
           {/* ===== Footer ===== */}
           <footer className="pb-12 sm:pb-16 pt-4">
             <div className="w-full h-px bg-gradient-to-r from-transparent via-[#DED8CE]/30 dark:via-[#363330]/30 to-transparent mb-6"></div>
-            <div className="flex flex-col items-center gap-2">
-              <p className="text-[9px] sm:text-[10px] font-serif italic text-[#C4BCB3] dark:text-[#524B43]">
-                Personal Reading Archive
+            <div className="flex flex-col items-center gap-3">
+              {/* 9-2: Random reading quote */}
+              <p className="text-[10px] sm:text-[11px] font-serif italic text-[#BAAFA0] dark:text-[#6B6560] text-center max-w-[280px] sm:max-w-none leading-relaxed">
+                &ldquo;<RandomQuote />&rdquo;
               </p>
-              <div className="group flex flex-col items-center">
+              <div className="group flex flex-col items-center mt-1">
                 <p className="text-[8px] font-sans text-[#C4BCB3]/50 dark:text-[#524B43]/50 tracking-[0.2em] mb-3">
                   Shelf.
                 </p>

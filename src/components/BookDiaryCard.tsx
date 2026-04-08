@@ -192,7 +192,7 @@ export default function BookDiaryCard({ id, title, date, tags, thumbnail, descri
               
               <div className="p-5 sm:p-6 overflow-y-auto max-h-[85vh]">
                 {thumbnail && (
-                  <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden mb-5 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+                  <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-5 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
                     <Image src={thumbnail} alt={title} fill sizes="(max-width: 640px) 250px, 400px" className="object-cover" />
                   </div>
                 )}

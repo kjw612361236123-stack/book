@@ -76,7 +76,7 @@ export default function YouTubeAudioPlayer({ videoId }: { videoId: string }) {
 
   return (
     <div 
-      className="fixed bottom-[calc(24px+env(safe-area-inset-bottom))] md:bottom-8 left-4 md:left-8 z-50 pointer-events-auto"
+      className="fixed bottom-[calc(24px+env(safe-area-inset-bottom))] md:bottom-8 left-4 md:left-8 z-40 pointer-events-auto"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 export default async function BookPost({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const recordMap = await getPage(id);
-  const { comment, thumbnail, author, keywords, status } = await getPageProperties(id);
+  const { comment, thumbnail, author, keywords, status, playlist } = await getPageProperties(id);
 
   const databaseId = process.env.NOTION_DATABASE_ID;
   const allBooks = await getDatabase(databaseId);
@@ -106,10 +106,10 @@ export default async function BookPost({ params }: { params: Promise<{ id: strin
 
       <div className="max-w-[520px] sm:max-w-3xl mx-auto px-4 sm:px-8 relative z-10">
         
-        {/* Back nav */}
+        {/* 7-3: Back nav — enlarged touch area */}
         <nav className="pt-5 sm:pt-8 mb-8 sm:mb-10">
-          <Link href="/" className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-serif text-[#8B7355] dark:text-[#D4C3A3] hover:text-[#6B5B3D] dark:hover:text-[#EFEFE9] transition-colors">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          <Link href="/" className="inline-flex items-center gap-2 text-[11px] sm:text-xs font-serif text-[#8B7355] dark:text-[#D4C3A3] hover:text-[#6B5B3D] dark:hover:text-[#EFEFE9] transition-colors py-2 pr-4 -ml-1 active:scale-[0.96]">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
             <span className="font-medium tracking-wide">서재로</span>
           </Link>
         </nav>
@@ -194,6 +194,62 @@ export default async function BookPost({ params }: { params: Promise<{ id: strin
           </article>
         )}
 
+        {/* 7-2: Divider before playlist */}
+        {playlist && (
+          <div className="w-10 sm:w-12 h-px bg-[#DED8CE] dark:bg-[#363330] mx-auto mb-8 sm:mb-10"></div>
+        )}
+
+        {/* Playlist — YouTube Link */}
+        {playlist && (() => {
+          const listMatch = playlist.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+          const vidMatch = playlist.match(/(?:youtu\.be\/|v=|embed\/|\/v\/|\/e\/|watch\?v=|&v=|shorts\/)([a-zA-Z0-9_-]{11})/);
+          const listId = listMatch ? listMatch[1] : null;
+          const ytId = vidMatch ? vidMatch[1] : null;
+          let embedUrl = null;
+          const validListId = listId && !listId.startsWith('RD') ? listId : null;
+
+          if (ytId && validListId) {
+            embedUrl = `https://www.youtube.com/embed/${ytId}?list=${validListId}&rel=0&modestbranding=1`;
+          } else if (ytId) {
+            embedUrl = `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`;
+          } else if (validListId) {
+            embedUrl = `https://www.youtube.com/embed/videoseries?list=${validListId}&rel=0&modestbranding=1`;
+          }
+          return embedUrl ? (
+            <section className="mb-10 sm:mb-12">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-5 h-px bg-[#DED8CE] dark:bg-[#363330]"></div>
+                <p className="text-[10px] sm:text-[11px] font-sans text-[#A39E98] dark:text-[#7A746D] tracking-wide flex items-center gap-1.5">
+                  <span className="text-[13px]">🎵</span>
+                  <span>이 책의 플레이리스트</span>
+                </p>
+              </div>
+              <div className="rounded-2xl overflow-hidden bg-[#EEEBE3] dark:bg-[#201E1C] shadow-[0_4px_20px_rgba(139,115,85,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] border border-[#E8E3D8]/50 dark:border-[#2C2826]/50">
+                <div className="aspect-video w-full">
+                  <iframe
+                    src={embedUrl}
+                    title="Playlist"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                    style={{ border: 'none' }}
+                  />
+                </div>
+              </div>
+              <div className="mt-2.5 flex justify-end">
+                <a
+                  href={playlist}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] font-sans text-[#A39E98] dark:text-[#7A746D] hover:text-[#8B7355] dark:hover:text-[#D4C3A3] transition-colors"
+                >
+                  YouTube에서 열기 ↗
+                </a>
+              </div>
+            </section>
+          ) : null;
+        })()}
+
         {/* Recommended Books */}
         {recommendedBooks.length > 0 && (
           <section className="mt-8 sm:mt-10">
@@ -202,31 +258,32 @@ export default async function BookPost({ params }: { params: Promise<{ id: strin
               <p className="text-[10px] sm:text-[11px] font-sans text-[#A39E98] dark:text-[#7A746D] tracking-wide">이런 책은 어때요</p>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+            {/* 7-1: 2-col on mobile for larger thumbnails */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               {recommendedBooks.map((book: any) => {
                 const bookStars = book.rating ? ratingToNum(book.rating) : 0;
                 return (
-                  <Link key={book.id} href={`/book/${book.id}`} className="group">
+                  <Link key={book.id} href={`/book/${book.id}`} className="group active:scale-[0.97] transition-transform">
                     <div className="aspect-[2.5/4] rounded-xl sm:rounded-2xl overflow-hidden bg-[#EEEBE3] dark:bg-[#201E1C] relative shadow-[0_2px_12px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.3)] group-hover:shadow-[0_8px_24px_rgba(139,115,85,0.1)] dark:group-hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)] group-hover:-translate-y-1 transition-all duration-500">
                       {book.thumbnail ? (
-                        <Image src={book.thumbnail} alt={book.title} fill className="object-cover group-hover:scale-[1.03] transition-transform duration-700" sizes="(max-width: 640px) 150px, 200px" />
+                        <Image src={book.thumbnail} alt={book.title} fill className="object-cover group-hover:scale-[1.03] transition-transform duration-700" sizes="(max-width: 640px) 180px, 200px" />
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center p-3">
-                          <span className="text-[9px] font-serif text-[#8B7355] dark:text-[#D4C3A3] text-center line-clamp-3">{book.title}</span>
+                          <span className="text-[10px] font-serif text-[#8B7355] dark:text-[#D4C3A3] text-center line-clamp-3">{book.title}</span>
                         </div>
                       )}
                       {bookStars > 0 && (
                         <div className="absolute top-2 right-2 bg-white/80 dark:bg-[#1A1817]/80 backdrop-blur-md rounded-full px-1.5 py-0.5 flex gap-[1px]">
                           {Array.from({ length: bookStars }).map((_, j) => (
-                            <span key={j} className="text-[6px] text-amber-500">★</span>
+                            <span key={j} className="text-[7px] text-amber-500">★</span>
                           ))}
                         </div>
                       )}
                     </div>
                     <div className="mt-2 sm:mt-2.5 px-0.5">
-                      <p className="text-[10px] sm:text-[11px] font-serif text-[#3A3530] dark:text-[#EFEFE9] line-clamp-1 group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-colors tracking-tight">{book.title}</p>
+                      <p className="text-[11px] sm:text-[11px] font-serif text-[#3A3530] dark:text-[#EFEFE9] line-clamp-1 group-hover:text-[#8B7355] dark:group-hover:text-[#D4C3A3] transition-colors tracking-tight">{book.title}</p>
                       {book.tags?.[0] && (
-                        <p className="text-[8px] sm:text-[9px] font-sans text-[#C4B9A8] dark:text-[#6B6560] mt-0.5">{book.tags[0]}</p>
+                        <p className="text-[9px] sm:text-[9px] font-sans text-[#C4B9A8] dark:text-[#6B6560] mt-0.5">{book.tags[0]}</p>
                       )}
                     </div>
                   </Link>

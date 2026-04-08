@@ -36,6 +36,7 @@ export const getDatabase = async (databaseId: string | undefined) => {
       // Match by property KEY name (e.g. properties['카테고리']) — NOT by p.name
       const tagsProp = properties['카테고리'] || Object.values(properties).find((p: any) => p.type === 'multi_select') as any;
       const ratingProp = properties['평점'] || Object.values(properties).find((p: any) => p.type === 'select') as any;
+      const playlistProp = properties['Playlist'];
 
       return {
         id: page.id,
@@ -45,6 +46,7 @@ export const getDatabase = async (databaseId: string | undefined) => {
         thumbnail: filesProp?.files?.[0]?.file?.url || filesProp?.files?.[0]?.external?.url || '',
         description: textProp?.rich_text?.[0]?.plain_text || '',
         rating: ratingProp?.select?.name || '',
+        playlist: playlistProp?.url || '',
       };
     });
   } catch (error) {

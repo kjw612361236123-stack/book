@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, X, LayoutGrid, AlignLeft, Library, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, X, LayoutGrid, AlignLeft, Library, ChevronLeft, ChevronRight, Music2 } from 'lucide-react';
 import type { Book } from '@/types/book';
 import BookDiaryCard from './BookDiaryCard';
 import ReadingDashboard from './ReadingDashboard';
 import BookShelf from './BookShelf';
 import BookTimeline from './BookTimeline';
+import PlaylistSection from './PlaylistSection';
 import { StaggeredReveal } from './PageEntrance';
 import { useBookFilter } from '@/hooks/useBookFilter';
 
@@ -19,10 +20,15 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
     allTags, filteredBooks
   } = useBookFilter(books);
 
-  const [viewMode, setViewMode] = useState<'gallery' | 'bookshelf' | 'timeline'>('gallery');
+  const [viewMode, setViewMode] = useState<'gallery' | 'bookshelf' | 'timeline' | 'playlist'>('gallery');
   const [showSearch, setShowSearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
+
+  // 1-3: playlist count
+  const playlistCount = useMemo(() => books.filter(b => b.playlist && b.playlist.trim() !== '').length, [books]);
+
+  const isPlaylistView = viewMode === 'playlist';
 
   useEffect(() => {
     const handleResize = () => setItemsPerPage(window.innerWidth < 640 ? 6 : 8);
@@ -45,6 +51,13 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
     window.scrollTo({ top: 300, behavior: 'smooth' });
   };
 
+  // 8-2: View transition variants
+  const viewVariants = {
+    initial: { opacity: 0, y: 16, scale: 0.98 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -8, scale: 0.99 }
+  };
+
   return (
     <div className="w-full flex flex-col gap-5 md:gap-7">
       
@@ -56,49 +69,56 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
             {/* Row 1: Views + Search + Sort */}
             <div className="flex items-center justify-between">
               
-              {/* Left: Total Count (User mockup) */}
+              {/* Left: Total Count — 1-3: changes based on view */}
               <div className="flex items-center gap-3">
-                <div className="text-[11px] sm:text-xs font-serif italic text-[#A39E98] dark:text-[#7A746D]">Total</div>
+                <div className="text-[11px] sm:text-xs font-serif italic text-[#A39E98] dark:text-[#7A746D]">
+                  {isPlaylistView ? 'Playlist' : 'Total'}
+                </div>
                 <div className="text-lg sm:text-xl font-serif text-[#3A3530] dark:text-[#D4C3A3] leading-none tabular-nums">
-                  {filteredBooks.length}
+                  {isPlaylistView ? playlistCount : filteredBooks.length}
                 </div>
               </div>
 
               {/* Right: Search, Sort, Views */}
               <div className="flex items-center gap-1.5 sm:gap-2">
                 
-                {/* Search Input (Pill style matching user's aesthetic) */}
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-3.5 pointer-events-none">
-                    <Search className="w-3.5 h-3.5 text-[#A39E98] dark:text-[#7A746D]" strokeWidth={2} />
-                  </div>
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="검색"
-                    className="h-8 sm:h-9 w-8 sm:w-9 focus:w-[130px] sm:focus:w-[150px] bg-[#EEEBE3] dark:bg-[#201E1C] hover:bg-[#E8E3D8] dark:hover:bg-[#2C2826] text-[10px] sm:text-[11px] font-sans rounded-full pl-8 sm:pl-9 pr-3 text-[#3A3530] dark:text-[#EFEFE9] placeholder:text-transparent focus:placeholder:text-[#BAAFA0] dark:focus:placeholder:text-[#7A746D] transition-all duration-300 outline-none focus:outline-none focus:ring-0 shadow-inner cursor-pointer focus:cursor-text border-transparent"
-                  />
-                </div>
+                {/* 1-2: Hide search & sort when playlist view */}
+                {!isPlaylistView && (
+                  <>
+                    {/* Search Input */}
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 sm:pl-3.5 pointer-events-none">
+                        <Search className="w-3.5 h-3.5 text-[#A39E98] dark:text-[#7A746D]" strokeWidth={2} />
+                      </div>
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="검색"
+                        className="h-8 sm:h-9 w-8 sm:w-9 focus:w-[130px] sm:focus:w-[150px] bg-[#EEEBE3] dark:bg-[#201E1C] hover:bg-[#E8E3D8] dark:hover:bg-[#2C2826] text-[10px] sm:text-[11px] font-sans rounded-full pl-8 sm:pl-9 pr-3 text-[#3A3530] dark:text-[#EFEFE9] placeholder:text-transparent focus:placeholder:text-[#BAAFA0] dark:focus:placeholder:text-[#7A746D] transition-all duration-300 outline-none focus:outline-none focus:ring-0 shadow-inner cursor-pointer focus:cursor-text border-transparent"
+                      />
+                    </div>
 
-                {/* Sort Dropdown */}
-                <div className="relative h-8 sm:h-9 bg-[#EEEBE3] dark:bg-[#201E1C] hover:bg-[#E8E3D8] dark:hover:bg-[#2C2826] rounded-full transition-colors flex items-center shadow-inner">
-                  <select 
-                    value={sortOption}
-                    onChange={(e: any) => setSortOption(e.target.value)}
-                    className="appearance-none bg-transparent h-full text-[10px] sm:text-[11px] font-sans text-[#A39E98] dark:text-[#7A746D] py-0 pl-3 sm:pl-4 pr-6 rounded-full outline-none focus:outline-none focus:ring-0 focus-visible:outline-none border-transparent cursor-pointer"
-                  >
-                    <option value="rating">별점순</option>
-                    <option value="newest">최신순</option>
-                    <option value="oldest">오래된순</option>
-                    <option value="title">가나다순</option>
-                  </select>
-                  <div className="absolute right-2 sm:right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#A39E98] dark:text-[#7A746D]">
-                    <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
-                  </div>
-                </div>
+                    {/* Sort Dropdown */}
+                    <div className="relative h-8 sm:h-9 bg-[#EEEBE3] dark:bg-[#201E1C] hover:bg-[#E8E3D8] dark:hover:bg-[#2C2826] rounded-full transition-colors flex items-center shadow-inner">
+                      <select 
+                        value={sortOption}
+                        onChange={(e: any) => setSortOption(e.target.value)}
+                        className="appearance-none bg-transparent h-full text-[10px] sm:text-[11px] font-sans text-[#A39E98] dark:text-[#7A746D] py-0 pl-3 sm:pl-4 pr-6 rounded-full outline-none focus:outline-none focus:ring-0 focus-visible:outline-none border-transparent cursor-pointer"
+                      >
+                        <option value="rating">별점순</option>
+                        <option value="newest">최신순</option>
+                        <option value="oldest">오래된순</option>
+                        <option value="title">가나다순</option>
+                      </select>
+                      <div className="absolute right-2 sm:right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#A39E98] dark:text-[#7A746D]">
+                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" /></svg>
+                      </div>
+                    </div>
+                  </>
+                )}
 
-                {/* View Toggles (User mockup exact match) */}
+                {/* View Toggles — 1-1: Optimized mobile sizing */}
                 <div className="flex items-center gap-0.5 bg-[#EEEBE3] dark:bg-[#201E1C] p-[3px] rounded-full shadow-inner border border-[#E8E3D8]/50 dark:border-[#2C2826]/50 shrink-0">
                   {[
                     { mode: 'gallery', icon: LayoutGrid, title: '갤러리' },
@@ -111,7 +131,7 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
                         key={mode}
                         onClick={() => setViewMode(mode as any)}
                         title={title}
-                        className={`flex items-center justify-center w-8 h-7 sm:w-12 sm:h-7 rounded-full transition-all duration-300 ${
+                        className={`flex items-center justify-center w-[30px] h-7 sm:w-11 sm:h-7 rounded-full transition-all duration-300 ${
                           isActive 
                             ? 'bg-[#FDFBF7] dark:bg-[#3A3530] shadow-[0_1px_4px_rgba(139,115,85,0.08)] dark:shadow-[0_1px_4px_rgba(0,0,0,0.3)] text-[#8B7355] dark:text-[#D4C3A3]' 
                             : 'text-[#A39E98] dark:text-[#7A746D] hover:text-[#6B6560] dark:hover:text-[#EFEFE9]'
@@ -126,32 +146,31 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
               </div>
             </div>
 
-
-            {/* Tags — Horizontal scroll */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide mask-fade-edges">
-              {allTags.map(tag => (
-                <button
-                  key={tag}
-                  onClick={() => setSelectedTag(tag)}
-                  className={`whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-sans transition-colors shrink-0 ${
-                    selectedTag === tag
-                      ? 'bg-[#3A3530] text-white dark:bg-[#EFEFE9] dark:text-[#1A1817]'
-                      : 'text-[#A39E98] dark:text-[#7A746D] hover:text-[#6B6560]'
-                  }`}
-                >
-                  {tag === 'All' ? '전체' : tag}
-                </button>
-              ))}
-              
-              {/* Count label removed as it is now in the top left */}
-            </div>
+            {/* Tags — 1-2: Hidden when playlist view */}
+            {!isPlaylistView && (
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-hide mask-fade-edges">
+                {allTags.map(tag => (
+                  <button
+                    key={tag}
+                    onClick={() => setSelectedTag(tag)}
+                    className={`whitespace-nowrap px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-sans transition-colors shrink-0 ${
+                      selectedTag === tag
+                        ? 'bg-[#3A3530] text-white dark:bg-[#EFEFE9] dark:text-[#1A1817]'
+                        : 'text-[#A39E98] dark:text-[#7A746D] hover:text-[#6B6560]'
+                    }`}
+                  >
+                    {tag === 'All' ? '전체' : tag}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </StaggeredReveal>
 
-      {/* ===== Content Area ===== */}
-      <StaggeredReveal delay={0.3} className="min-h-[400px]">
-        {filteredBooks.length === 0 ? (
+      {/* ===== Content Area — 8-3: min-height for smooth transitions ===== */}
+      <StaggeredReveal delay={0.3} className="min-h-[420px] sm:min-h-[480px]">
+        {filteredBooks.length === 0 && !isPlaylistView ? (
           <div className="w-full py-24 flex flex-col items-center justify-center">
              <div className="w-16 h-16 mb-5 text-[#DED8CE] dark:text-[#363330] opacity-40">
                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="0.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
@@ -163,10 +182,11 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
           <AnimatePresence mode="wait">
             <motion.div
               key={`${viewMode}-${currentPage}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
+              variants={viewVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             >
               {viewMode === 'gallery' && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
@@ -183,11 +203,15 @@ export default function BookArchive({ books, readingGoal = 24 }: { books: Book[]
               {viewMode === 'timeline' && (
                 <BookTimeline books={filteredBooks} />
               )}
+
+              {viewMode === 'playlist' && (
+                <PlaylistSection books={books} />
+              )}
             </motion.div>
           </AnimatePresence>
         )}
 
-        {/* Pagination — Premium dots */}
+        {/* Pagination — only for gallery */}
         {viewMode === 'gallery' && totalPages > 1 && (
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}

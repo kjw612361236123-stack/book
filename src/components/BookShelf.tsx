@@ -62,8 +62,8 @@ export default function BookShelf({ books }: { books: Book[] }) {
         onMouseLeave={handleMouseLeave}
         onMouseUp={handleMouseUp}
         onMouseMove={handleMouseMove}
-        className={`flex overflow-x-auto gap-4 sm:gap-5 pb-8 pt-2 snap-x snap-mandatory scrollbar-hide px-2 -mx-2 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`} 
-        style={{ maskImage: 'linear-gradient(to right, transparent, black 4%, black 96%, transparent)', WebkitMaskImage: '-webkit-linear-gradient(left, transparent, black 4%, black 96%, transparent)' }}
+        className={`flex overflow-x-auto gap-3 sm:gap-5 pb-8 pt-2 snap-x snap-mandatory scrollbar-hide px-4 -mx-4 sm:px-2 sm:-mx-2 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`} 
+        style={{ maskImage: 'linear-gradient(to right, transparent, black 3%, black 97%, transparent)', WebkitMaskImage: '-webkit-linear-gradient(left, transparent, black 3%, black 97%, transparent)' }}
       >
         {books.map((book, i) => {
           const starCount = book.rating ? ratingToStars(book.rating) : 0;
@@ -74,16 +74,16 @@ export default function BookShelf({ books }: { books: Book[] }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-20px" }}
               transition={{ delay: (i % 6) * 0.04, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col shrink-0 w-[130px] sm:w-[150px] md:w-[170px] snap-start"
+              className="flex flex-col shrink-0 w-[120px] sm:w-[150px] md:w-[170px] snap-center"
             >
               <Link 
                 href={`/book/${book.id}`} 
                 onClick={(e) => { if (hasDragged) e.preventDefault(); }}
                 onDragStart={(e) => e.preventDefault()}
-                className="relative group block overflow-hidden rounded-xl aspect-[2.5/4] shadow-[0_2px_12px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.4)] hover:-translate-y-2 hover:shadow-[0_12px_32px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.6)] transition-all duration-500"
+                className="relative group block overflow-hidden rounded-xl aspect-[2.5/4] shadow-[0_1px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_1px_8px_rgba(0,0,0,0.2)] hover:-translate-y-1.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.3)] border border-transparent dark:border-[#2C2826]/30 transition-all duration-500"
               >
                  {book.thumbnail ? (
-                   <Image src={book.thumbnail} alt={book.title} fill sizes="(max-width: 640px) 150px, 200px" className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-none" />
+                   <Image src={book.thumbnail} alt={book.title} fill sizes="(max-width: 640px) 120px, 200px" className="object-cover transition-transform duration-700 ease-out group-hover:scale-105 pointer-events-none" />
                  ) : (
                    <div className="w-full h-full flex items-center justify-center p-2 bg-gradient-to-br from-[#FDFBF7] to-[#EEEBE3] dark:from-[#1E1C1A] dark:to-[#201E1C] text-[9px] font-serif text-center border-l-[3px] border-[#8B7355]/40 text-[#3A3530] dark:text-[#EFEFE9]">
                      {book.title}
@@ -91,20 +91,33 @@ export default function BookShelf({ books }: { books: Book[] }) {
                  )}
                  {/* Spine shadow */}
                  <div className="absolute inset-y-0 left-0 w-[3px] bg-gradient-to-r from-black/20 via-black/5 to-transparent pointer-events-none" />
-                 {/* Hover overlay */}
-                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
-                   <div className="w-full">
-                     <p className="text-white text-[8px] sm:text-[9px] font-sans line-clamp-2 leading-tight mb-1">{book.title}</p>
-                     {starCount > 0 && (
-                       <div className="flex gap-[1px]">
-                         {Array.from({ length: starCount }).map((_, j) => (
-                           <span key={j} className="text-[7px] text-amber-400">★</span>
-                         ))}
-                       </div>
-                     )}
+                 
+                 {/* Rating badge — always visible on mobile */}
+                 {starCount > 0 && (
+                   <div className="absolute top-2 right-2 bg-white/80 dark:bg-[#1A1817]/80 backdrop-blur-md rounded-full px-1.5 py-[3px] flex gap-[1px] z-[2]">
+                     {Array.from({ length: starCount }).map((_, j) => (
+                       <span key={j} className="text-[6px] text-amber-400">★</span>
+                     ))}
                    </div>
+                 )}
+                 
+                 {/* Hover overlay — desktop only */}
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:flex items-end p-2.5">
+                   <p className="text-white text-[9px] font-sans line-clamp-2 leading-tight">{book.title}</p>
                  </div>
               </Link>
+
+              {/* 4-1: Title always visible below card on mobile */}
+              <div className="mt-2 px-0.5">
+                <p className="text-[10px] sm:text-[11px] font-serif text-[#3A3530] dark:text-[#EFEFE9] line-clamp-2 leading-snug tracking-tight">
+                  {book.title}
+                </p>
+                {book.tags[0] && (
+                  <p className="text-[8px] sm:text-[9px] font-sans text-[#A39E98] dark:text-[#7A746D] mt-0.5 truncate">
+                    {book.tags[0]}
+                  </p>
+                )}
+              </div>
             </motion.div>
           );
         })}

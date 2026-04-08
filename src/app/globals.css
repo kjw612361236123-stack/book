@@ -62,12 +62,20 @@ body {
 
 /* ===== Premium Touch Interactions ===== */
 button, a, [role="button"] {
-  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.15s ease;
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.15s ease;
   -webkit-user-select: none;
   user-select: none;
 }
 button:active, a:active, [role="button"]:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* After bounce restore — feel of spring */
+@media (hover: none) {
+  button:active, a:active, [role="button"]:active {
+    transform: scale(0.93);
+  }
 }
 
 /* Smooth image rendering */

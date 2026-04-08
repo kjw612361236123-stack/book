@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useRef } from 'react';
+import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import type { Book } from '@/types/book';
 
@@ -17,6 +17,9 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
   const [selectedYear, setSelectedYear] = useState<number>(
     availableYears[0] || new Date().getFullYear()
   );
+
+  // 6-2: Active bar for mobile tap
+  const [activeBar, setActiveBar] = useState<number | null>(null);
 
   const stats = useMemo(() => {
     let yearBooks = 0;
@@ -61,6 +64,25 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
+  // 6-1: Active dot tracking based on scroll position
+  const [activeCard, setActiveCard] = useState(0);
+  const totalCards = 4;
+
+  const updateActiveCard = useCallback(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const scrollRatio = el.scrollLeft / (el.scrollWidth - el.clientWidth);
+    const newActive = Math.min(Math.round(scrollRatio * (totalCards - 1)), totalCards - 1);
+    setActiveCard(newActive);
+  }, [totalCards]);
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', updateActiveCard, { passive: true });
+    return () => el.removeEventListener('scroll', updateActiveCard);
+  }, [updateActiveCard]);
+
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!scrollContainerRef.current) return;
     setIsDragging(true);
@@ -88,33 +110,33 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
         onMouseMove={handleMouseMove}
         className={`flex overflow-x-auto snap-x snap-mandatory gap-3 sm:gap-4 pb-4 scrollbar-hide px-1 -mx-1 ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
       >
-        {/* Card 1: Summary — Dark premium */}
+        {/* Card 1: Summary — Minimalist Flat */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="min-w-[78vw] sm:min-w-[240px] max-w-[300px] flex-1 snap-center bg-gradient-to-br from-[#3A3530] via-[#2E2B28] to-[#242220] dark:from-[#2A2826] dark:via-[#222220] dark:to-[#1E1C1A] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between shadow-[0_4px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_4px_24px_rgba(0,0,0,0.4)] shrink-0 border border-[#4A453F]/20 dark:border-[#363330]/50"
+          className="min-w-[78vw] sm:min-w-[240px] max-w-[300px] flex-1 snap-center bg-[#FDFBF7]/80 dark:bg-[#1A1817]/80 backdrop-blur-sm border border-[#E8E3D8]/80 dark:border-[#2C2826]/80 rounded-[20px] p-5 sm:p-6 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)] dark:shadow-[0_2px_12px_rgba(0,0,0,0.2)] shrink-0"
         >
           <div>
             <h3 className="text-[#A39E98] text-[9px] font-sans tracking-[0.2em] uppercase mb-4">Summary</h3>
             <div className="space-y-3.5">
               <div>
-                <p className="text-white/30 text-[8px] font-sans tracking-wider uppercase mb-0.5">Total Books</p>
-                <p className="text-white text-3xl font-serif tabular-nums tracking-tight">{stats.total}</p>
+                <p className="text-[#C4B9A8] dark:text-[#524B43] text-[8px] font-sans tracking-wider uppercase mb-0.5">Total Books</p>
+                <p className="text-[#3A3530] dark:text-[#EFEFE9] text-3xl font-serif tabular-nums tracking-tight">{stats.total}</p>
               </div>
-              <div className="w-full h-px bg-white/8"></div>
+              <div className="w-full h-px bg-[#E8E3D8]/50 dark:bg-[#2C2826]/50"></div>
               <div>
-                <p className="text-white/30 text-[8px] font-sans tracking-wider uppercase mb-0.5">This Year</p>
-                <p className="text-white text-3xl font-serif tabular-nums tracking-tight">{stats.yearBooks}</p>
+                <p className="text-[#C4B9A8] dark:text-[#524B43] text-[8px] font-sans tracking-wider uppercase mb-0.5">This Year</p>
+                <p className="text-[#3A3530] dark:text-[#EFEFE9] text-3xl font-serif tabular-nums tracking-tight">{stats.yearBooks}</p>
               </div>
-              <div className="w-full h-px bg-white/8"></div>
+              <div className="w-full h-px bg-[#E8E3D8]/50 dark:bg-[#2C2826]/50"></div>
               <div>
-                <p className="text-white/30 text-[8px] font-sans tracking-wider uppercase mb-0.5">Favorite</p>
-                <p className="text-[#D4C3A3] text-sm sm:text-base font-serif">{stats.topTags[0]?.tag || '—'}</p>
+                <p className="text-[#C4B9A8] dark:text-[#524B43] text-[8px] font-sans tracking-wider uppercase mb-0.5">Favorite</p>
+                <p className="text-[#8B7355] dark:text-[#D4C3A3] text-sm sm:text-base font-serif">{stats.topTags[0]?.tag || '—'}</p>
               </div>
             </div>
           </div>
-          <p className="text-white/15 text-[8px] font-sans mt-5 italic tracking-wide">Keep reading, keep growing.</p>
+          <p className="text-[#C4BCB3] dark:text-[#524B43] text-[8px] font-sans mt-5 italic tracking-widest text-center">SILENCE IS GOLDEN.</p>
         </motion.div>
 
         {/* Card 2: Yearly Goal */}
@@ -124,16 +146,16 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
           transition={{ duration: 0.6, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
           className="min-w-[78vw] sm:min-w-[280px] max-w-[360px] flex-1 snap-center bg-white/50 dark:bg-[#1E1C1A]/50 backdrop-blur-sm border border-[#E8E3D8]/60 dark:border-[#2C2826]/60 rounded-[20px] p-5 sm:p-6 flex flex-col shadow-[0_2px_16px_rgba(0,0,0,0.02)] dark:shadow-[0_2px_16px_rgba(0,0,0,0.2)] shrink-0"
         >
-          {/* Year selector */}
-          <div className="flex items-center gap-1.5 mb-4">
+          {/* 6-3: Year selector — larger touch targets */}
+          <div className="flex items-center gap-1 mb-4">
             {availableYears.map(year => (
               <button
                 key={year}
                 onClick={() => setSelectedYear(year)}
-                className={`text-[10px] font-sans px-2 py-0.5 rounded-lg transition-all duration-300 ${
+                className={`text-[11px] font-sans px-3 py-1.5 rounded-lg transition-all duration-300 min-h-[32px] min-w-[48px] ${
                   selectedYear === year
                     ? 'bg-[#3A3530] text-[#FDFBF7] dark:bg-[#D4C3A3] dark:text-[#1A1817] shadow-sm'
-                    : 'text-[#A39E98] hover:text-[#6B6560]'
+                    : 'text-[#A39E98] hover:text-[#6B6560] active:bg-[#F5F0E8] dark:active:bg-[#2C2826]'
                 }`}
               >
                 {year}
@@ -191,22 +213,45 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
               const heightPct = count > 0 ? Math.max((count / maxCount) * 100, 10) : 0;
               const isCurrent = new Date().getFullYear() === selectedYear && new Date().getMonth() === i;
               const hasBooks = count > 0;
+              const isBarActive = activeBar === i;
               return (
-                <div key={i} className="flex flex-col items-center flex-1 gap-1.5 group relative cursor-default h-full">
-                  {hasBooks && (
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-[#3A3530] dark:bg-[#EFEFE9] text-white dark:text-[#1A1817] text-[8px] font-sans px-1.5 py-0.5 rounded-md whitespace-nowrap z-10 shadow-lg pointer-events-none">
+                <div 
+                  key={i} 
+                  className="flex flex-col items-center flex-1 gap-1.5 group relative cursor-default h-full"
+                  onClick={() => setActiveBar(isBarActive ? null : (hasBooks ? i : null))}
+                  onMouseEnter={() => hasBooks && setActiveBar(i)}
+                  onMouseLeave={() => setActiveBar(null)}
+                >
+                  {/* 6-2: Tooltip — shown on tap (mobile) and hover (desktop) */}
+                  {hasBooks && isBarActive && (
+                    <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#3A3530] dark:bg-[#EFEFE9] text-white dark:text-[#1A1817] text-[9px] font-sans px-2 py-1 rounded-lg whitespace-nowrap z-10 shadow-lg pointer-events-none animate-fade-in">
                       {count}권
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[4px] border-transparent border-t-[#3A3530] dark:border-t-[#EFEFE9]"></div>
                     </div>
                   )}
+                  {/* Bar with count label on top when has books */}
                   <div className="w-full flex-1 relative rounded-sm overflow-hidden">
+                    {hasBooks && !isBarActive && (
+                      <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-[7px] font-sans text-[#A39E98] dark:text-[#7A746D] tabular-nums sm:hidden">
+                        {count}
+                      </div>
+                    )}
                     <motion.div
                       initial={{ height: 0 }}
                       animate={{ height: heightPct === 0 ? '0%' : `${heightPct}%` }}
                       transition={{ duration: 0.8, delay: 0.3 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
-                      className={`absolute bottom-0 left-0 w-full rounded-[3px] ${isCurrent ? 'bg-[#8B7355] dark:bg-[#D4C3A3]' : hasBooks ? 'bg-[#D4CCB8] dark:bg-[#4A453F]' : 'bg-transparent'}`}
+                      className={`absolute bottom-0 left-0 w-full rounded-[3px] transition-all duration-200 ${
+                        isCurrent 
+                          ? 'bg-[#8B7355] dark:bg-[#D4C3A3]' 
+                          : isBarActive 
+                            ? 'bg-[#A39080] dark:bg-[#8B7355]'
+                            : hasBooks 
+                              ? 'bg-[#D4CCB8] dark:bg-[#4A453F]' 
+                              : 'bg-transparent'
+                      }`}
                     />
                   </div>
-                  <span className={`text-[7px] sm:text-[8px] font-sans tracking-tighter shrink-0 ${isCurrent ? 'text-[#8B7355] dark:text-[#D4C3A3] font-bold' : 'text-[#C4BCB3] dark:text-[#524B43]'}`}>
+                  <span className={`text-[8px] sm:text-[8px] font-sans tracking-tighter shrink-0 ${isCurrent ? 'text-[#8B7355] dark:text-[#D4C3A3] font-bold' : 'text-[#C4BCB3] dark:text-[#524B43]'}`}>
                     {monthLabels[i]}
                   </span>
                 </div>
@@ -215,9 +260,11 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
           </div>
           <div className="mt-3 pt-2.5 border-t border-[#F5F0E8]/80 dark:border-[#2C2826]/60">
             <p className="text-[9px] font-sans text-[#A39E98] dark:text-[#7A746D] line-clamp-1">
-              {stats.monthlyTitles.flat().length > 0
-                ? `최근: ${stats.monthlyTitles.flat().slice(-3).join(' · ')}`
-                : '아직 기록이 없어요'}
+              {activeBar !== null && stats.monthlyTitles[activeBar].length > 0
+                ? `${activeBar + 1}월: ${stats.monthlyTitles[activeBar].join(' · ')}`
+                : stats.monthlyTitles.flat().length > 0
+                  ? `최근: ${stats.monthlyTitles.flat().slice(-3).join(' · ')}`
+                  : '아직 기록이 없어요'}
             </p>
           </div>
         </motion.div>
@@ -249,17 +296,16 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
                 );
               })}
             </div>
-            {/* Legend */}
+            {/* Chart legend — Single tone */}
             <div className="space-y-2">
               {stats.topTags.map((item, idx) => (
                 <div key={item.tag} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-sm ${tagColors[idx % tagColors.length].dot}`} />
+                    <span className={`w-1.5 h-1.5 rounded-full ${tagColors[idx % tagColors.length].dot}`} />
                     <span className="text-[10px] sm:text-[11px] font-sans text-[#6B6560] dark:text-[#A39E98]">{item.tag}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] sm:text-[11px] font-sans text-[#3A3530] dark:text-[#EFEFE9] font-medium tabular-nums">{item.count}</span>
-                    <span className="text-[8px] font-sans text-[#BAAFA0] dark:text-[#7A746D] tabular-nums w-6 text-right">{Math.round((item.count / stats.totalTagsCount) * 100)}%</span>
                   </div>
                 </div>
               ))}
@@ -268,12 +314,18 @@ export default function ReadingDashboard({ books, goal = 24 }: { books: Book[], 
         </motion.div>
       </div>
       
-      {/* Swipe indicator — Mobile */}
+      {/* 6-1: Swipe indicator — synced with scroll position */}
       <div className="flex items-center justify-center gap-1.5 mt-2 sm:hidden">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#8B7355] dark:bg-[#D4C3A3]" />
-        <span className="w-1.5 h-1.5 rounded-full bg-[#DED8CE] dark:bg-[#363330]" />
-        <span className="w-1.5 h-1.5 rounded-full bg-[#DED8CE] dark:bg-[#363330]" />
-        <span className="w-1.5 h-1.5 rounded-full bg-[#DED8CE] dark:bg-[#363330]" />
+        {Array.from({ length: totalCards }).map((_, i) => (
+          <span 
+            key={i} 
+            className={`rounded-full transition-all duration-300 ${
+              activeCard === i 
+                ? 'w-4 h-1.5 bg-[#8B7355] dark:bg-[#D4C3A3]' 
+                : 'w-1.5 h-1.5 bg-[#DED8CE] dark:bg-[#363330]'
+            }`} 
+          />
+        ))}
       </div>
     </div>
   );

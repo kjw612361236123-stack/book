@@ -6,4 +6,5 @@ export interface Book {
   thumbnail: string;
   description: string;
   rating?: string;
+  playlist?: string;
 }
